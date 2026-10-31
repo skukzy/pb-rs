@@ -1,0 +1,15 @@
+[package]
+name = "pb-js"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+serde.workspace = true
+serde_json = { version = "1", features = ["preserve_order"] }
+rquickjs = "0.14"
+tracing = "0.1"
+rand = "0.8"
+sha2 = "0.10"
+md-5 = "0.10"
