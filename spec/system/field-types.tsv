@@ -1,0 +1,14 @@
+autodate	Autodate
+bool	Bool
+date	Date
+editor	Editor
+email	Email
+file	File
+geoPoint	GeoPoint
+json	JSON
+number	Number
+password	Password
+relation	Relation
+select	Select
+text	Text
+url	URL

@@ -1,0 +1,329 @@
+{
+  "name": "m3g-fields",
+  "requests": [
+    {
+      "name": "login",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-with-password",
+      "body": "{\"identity\": \"admin@example.com\", \"password\": \"pass12345678\"}",
+      "save": { "token": "token" }
+    },
+    {
+      "name": "create-zrefs",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"type\": \"base\", \"name\": \"zrefs\", \"fields\": [{\"name\": \"title\", \"type\": \"text\", \"required\": true}]}",
+      "save": { "zrefsId": "id" }
+    },
+    {
+      "name": "create-ztypes",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"type\": \"base\", \"name\": \"ztypes\", \"fields\": [{\"name\": \"title\", \"type\": \"text\", \"required\": true, \"min\": 3, \"max\": 10, \"pattern\": \"^[a-z]+$\"}, {\"name\": \"code\", \"type\": \"text\"}, {\"name\": \"slug\", \"type\": \"text\", \"autogeneratePattern\": \"fixed\"}, {\"name\": \"num\", \"type\": \"number\", \"min\": 1, \"max\": 10, \"onlyInt\": true}, {\"name\": \"price\", \"type\": \"number\"}, {\"name\": \"flag\", \"type\": \"bool\"}, {\"name\": \"mail\", \"type\": \"email\", \"required\": true}, {\"name\": \"site\", \"type\": \"url\"}, {\"name\": \"when\", \"type\": \"date\"}, {\"name\": \"pick\", \"type\": \"select\", \"values\": [\"a\", \"b\"], \"maxSelect\": 1}, {\"name\": \"many\", \"type\": \"select\", \"values\": [\"x\", \"y\", \"z\"], \"maxSelect\": 2}, {\"name\": \"blob\", \"type\": \"json\"}, {\"name\": \"point\", \"type\": \"geoPoint\"}, {\"name\": \"ref\", \"type\": \"relation\", \"collectionId\": \"{{zrefsId}}\", \"maxSelect\": 1}, {\"name\": \"refs\", \"type\": \"relation\", \"collectionId\": \"{{zrefsId}}\", \"maxSelect\": 2}, {\"name\": \"attach\", \"type\": \"file\", \"maxSelect\": 1}], \"indexes\": [\"CREATE UNIQUE INDEX idx_ztypes_code ON ztypes (code)\"]}",
+      "save": { "ztypesId": "id" }
+    },
+    {
+      "name": "create-ref1",
+      "method": "POST",
+      "path": "/api/collections/zrefs/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"title\": \"one\"}",
+      "save": { "ref1": "id" }
+    },
+    {
+      "name": "create-ref2",
+      "method": "POST",
+      "path": "/api/collections/zrefs/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"title\": \"two\"}",
+      "save": { "ref2": "id" }
+    },
+    {
+      "name": "create-valid",
+      "method": "POST",
+      "path": "/api/collections/ztypes/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"title\": \"abc\", \"code\": \"c1\", \"num\": 5, \"price\": 1.5, \"flag\": true, \"mail\": \"a@b.co\", \"site\": \"https://example.com\", \"when\": \"2024-01-02 03:04:05.000Z\", \"pick\": \"a\", \"many\": [\"x\", \"y\"], \"blob\": {\"b\": 2, \"a\": [1, 2]}, \"point\": {\"lon\": 10, \"lat\": 20}, \"ref\": \"{{ref1}}\", \"refs\": [\"{{ref1}}\", \"{{ref2}}\"]}",
+      "save": { "rid": "id" }
+    },
+    {
+      "name": "get-valid",
+      "method": "GET",
+      "path": "/api/collections/ztypes/records/{{rid}}",
+      "headers": { "authorization": "{{token}}" }
+    },
+    {
+      "name": "missing-required",
+      "method": "POST",
+      "path": "/api/collections/ztypes/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"mail\": \"a@b.co\"}"
+    },
+    {
+      "name": "text-min",
+      "method": "POST",
+      "path": "/api/collections/ztypes/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"title\": \"ab\", \"mail\": \"a@b.co\"}"
+    },
+    {
+      "name": "text-max",
+      "method": "POST",
+      "path": "/api/collections/ztypes/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"title\": \"abcdefghijk\", \"mail\": \"a@b.co\"}"
+    },
+    {
+      "name": "text-pattern",
+      "method": "POST",
+      "path": "/api/collections/ztypes/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"title\": \"ABC\", \"mail\": \"a@b.co\"}"
+    },
+    {
+      "name": "num-only-int",
+      "method": "POST",
+      "path": "/api/collections/ztypes/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"title\": \"abc\", \"code\": \"c2\", \"mail\": \"a@b.co\", \"num\": 1.5}"
+    },
+    {
+      "name": "num-min",
+      "method": "POST",
+      "path": "/api/collections/ztypes/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"title\": \"abc\", \"code\": \"c3\", \"mail\": \"a@b.co\", \"num\": 0}"
+    },
+    {
+      "name": "num-max",
+      "method": "POST",
+      "path": "/api/collections/ztypes/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"title\": \"abc\", \"code\": \"c4\", \"mail\": \"a@b.co\", \"num\": 11}"
+    },
+    {
+      "name": "num-nan",
+      "method": "POST",
+      "path": "/api/collections/ztypes/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"title\": \"abc\", \"code\": \"c5\", \"mail\": \"a@b.co\", \"num\": \"NaN\"}"
+    },
+    {
+      "name": "num-inf",
+      "method": "POST",
+      "path": "/api/collections/ztypes/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"title\": \"abc\", \"code\": \"c6\", \"mail\": \"a@b.co\", \"num\": \"Inf\"}"
+    },
+    {
+      "name": "bad-email",
+      "method": "POST",
+      "path": "/api/collections/ztypes/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"title\": \"abc\", \"code\": \"c7\", \"mail\": \"not-an-email\"}"
+    },
+    {
+      "name": "bad-url",
+      "method": "POST",
+      "path": "/api/collections/ztypes/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"title\": \"abc\", \"code\": \"c8\", \"mail\": \"a@b.co\", \"site\": \"not a url\"}"
+    },
+    {
+      "name": "select-invalid",
+      "method": "POST",
+      "path": "/api/collections/ztypes/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"title\": \"abc\", \"code\": \"c9\", \"mail\": \"a@b.co\", \"pick\": \"z\"}"
+    },
+    {
+      "name": "select-too-many",
+      "method": "POST",
+      "path": "/api/collections/ztypes/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"title\": \"abc\", \"code\": \"c10\", \"mail\": \"a@b.co\", \"many\": [\"x\", \"y\", \"z\"]}"
+    },
+    {
+      "name": "relation-missing",
+      "method": "POST",
+      "path": "/api/collections/ztypes/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"title\": \"abc\", \"code\": \"c11\", \"mail\": \"a@b.co\", \"ref\": \"aaaaaaaaaaaaaaa\"}"
+    },
+    {
+      "name": "file-invalid",
+      "method": "POST",
+      "path": "/api/collections/ztypes/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"title\": \"abc\", \"code\": \"c12\", \"mail\": \"a@b.co\", \"attach\": [\"x.txt\"]}"
+    },
+    {
+      "name": "unique-duplicate",
+      "method": "POST",
+      "path": "/api/collections/ztypes/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"title\": \"abc\", \"code\": \"c1\", \"mail\": \"a@b.co\"}"
+    },
+    {
+      "name": "many-errors",
+      "method": "POST",
+      "path": "/api/collections/ztypes/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"title\": \"AB\", \"code\": \"c13\", \"num\": 0, \"mail\": \"bad\", \"site\": \"bad\", \"pick\": \"z\", \"many\": [\"x\", \"y\", \"z\"], \"ref\": \"aaaaaaaaaaaaaaa\"}"
+    },
+    {
+      "name": "date-invalid",
+      "method": "POST",
+      "path": "/api/collections/ztypes/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"title\": \"abc\", \"code\": \"c14\", \"mail\": \"a@b.co\", \"when\": \"garbage\"}",
+      "save": { "dateRid": "id" }
+    },
+    {
+      "name": "geo-invalid",
+      "method": "POST",
+      "path": "/api/collections/ztypes/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"title\": \"abc\", \"code\": \"c15\", \"mail\": \"a@b.co\", \"point\": \"garbage\"}",
+      "save": { "geoRid": "id" }
+    },
+    {
+      "name": "json-empty-string",
+      "method": "POST",
+      "path": "/api/collections/ztypes/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"title\": \"abc\", \"code\": \"c16\", \"mail\": \"a@b.co\", \"blob\": \"\"}",
+      "save": { "j1": "id" }
+    },
+    {
+      "name": "json-null",
+      "method": "POST",
+      "path": "/api/collections/ztypes/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"title\": \"abc\", \"code\": \"c17\", \"mail\": \"a@b.co\", \"blob\": \"null\"}",
+      "save": { "j2": "id" }
+    },
+    {
+      "name": "json-true",
+      "method": "POST",
+      "path": "/api/collections/ztypes/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"title\": \"abc\", \"code\": \"c18\", \"mail\": \"a@b.co\", \"blob\": \"true\"}",
+      "save": { "j3": "id" }
+    },
+    {
+      "name": "json-number",
+      "method": "POST",
+      "path": "/api/collections/ztypes/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"title\": \"abc\", \"code\": \"c19\", \"mail\": \"a@b.co\", \"blob\": \"12.5\"}",
+      "save": { "j4": "id" }
+    },
+    {
+      "name": "json-bad",
+      "method": "POST",
+      "path": "/api/collections/ztypes/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"title\": \"abc\", \"code\": \"c20\", \"mail\": \"a@b.co\", \"blob\": \"[bad\"}",
+      "save": { "j5": "id" }
+    },
+    {
+      "name": "json-object-string",
+      "method": "POST",
+      "path": "/api/collections/ztypes/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"title\": \"abc\", \"code\": \"c21\", \"mail\": \"a@b.co\", \"blob\": \"{\\\"z\\\": 1, \\\"a\\\": 2}\"}",
+      "save": { "j6": "id" }
+    },
+    {
+      "name": "json-object",
+      "method": "POST",
+      "path": "/api/collections/ztypes/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"title\": \"abc\", \"code\": \"c22\", \"mail\": \"a@b.co\", \"blob\": {\"b\": 1.0, \"a\": 1e21, \"c\": [1.5, null, false]}}",
+      "save": { "j7": "id" }
+    },
+    {
+      "name": "get-date-invalid",
+      "method": "GET",
+      "path": "/api/collections/ztypes/records/{{dateRid}}",
+      "headers": { "authorization": "{{token}}" }
+    },
+    {
+      "name": "get-geo-invalid",
+      "method": "GET",
+      "path": "/api/collections/ztypes/records/{{geoRid}}",
+      "headers": { "authorization": "{{token}}" }
+    },
+    {
+      "name": "get-json-normalized",
+      "method": "GET",
+      "path": "/api/collections/ztypes/records/{{j7}}",
+      "headers": { "authorization": "{{token}}" }
+    },
+    {
+      "name": "mod-many-append",
+      "method": "PATCH",
+      "path": "/api/collections/ztypes/records/{{rid}}",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"many+\": [\"y\"]}"
+    },
+    {
+      "name": "mod-many-prepend",
+      "method": "PATCH",
+      "path": "/api/collections/ztypes/records/{{rid}}",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"+many\": [\"z\"]}"
+    },
+    {
+      "name": "mod-many-subtract",
+      "method": "PATCH",
+      "path": "/api/collections/ztypes/records/{{rid}}",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"many-\": [\"x\"]}"
+    },
+    {
+      "name": "mod-num-add",
+      "method": "PATCH",
+      "path": "/api/collections/ztypes/records/{{rid}}",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"num+\": 3}"
+    },
+    {
+      "name": "mod-price-subtract",
+      "method": "PATCH",
+      "path": "/api/collections/ztypes/records/{{rid}}",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"price-\": 0.5}"
+    },
+    {
+      "name": "mod-pick-append",
+      "method": "PATCH",
+      "path": "/api/collections/ztypes/records/{{rid}}",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"pick+\": \"b\"}"
+    },
+    {
+      "name": "mod-slug-autogenerate",
+      "method": "PATCH",
+      "path": "/api/collections/ztypes/records/{{rid}}",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"slug:autogenerate\": \"\"}"
+    },
+    {
+      "name": "get-after-modifiers",
+      "method": "GET",
+      "path": "/api/collections/ztypes/records/{{rid}}",
+      "headers": { "authorization": "{{token}}" }
+    },
+    {
+      "name": "list-all",
+      "method": "GET",
+      "path": "/api/collections/ztypes/records",
+      "headers": { "authorization": "{{token}}" },
+      "query": { "sort": "code", "perPage": "100" }
+    }
+  ]
+}

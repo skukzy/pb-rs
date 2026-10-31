@@ -1,0 +1,250 @@
+{
+  "name": "m3f-collection-macro",
+  "requests": [
+    {
+      "name": "login",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-with-password",
+      "body": "{\"identity\": \"admin@example.com\", \"password\": \"pass12345678\"}",
+      "save": {
+        "token": "token"
+      }
+    },
+    {
+      "name": "macro-any",
+      "method": "GET",
+      "path": "/api/collections/articles/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "@collection.members.name ?= 'Alice'",
+        "sort": "title"
+      }
+    },
+    {
+      "name": "macro-all",
+      "method": "GET",
+      "path": "/api/collections/articles/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "@collection.members.name = 'Alice'",
+        "sort": "title"
+      }
+    },
+    {
+      "name": "macro-all-ne",
+      "method": "GET",
+      "path": "/api/collections/articles/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "@collection.members.name != 'Alice'",
+        "sort": "title"
+      }
+    },
+    {
+      "name": "macro-any-ne",
+      "method": "GET",
+      "path": "/api/collections/articles/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "@collection.members.name ?!= 'Alice'",
+        "sort": "title"
+      }
+    },
+    {
+      "name": "macro-like-any",
+      "method": "GET",
+      "path": "/api/collections/articles/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "@collection.members.email ?~ 'example.com'",
+        "sort": "title"
+      }
+    },
+    {
+      "name": "macro-like-none",
+      "method": "GET",
+      "path": "/api/collections/articles/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "@collection.members.email ?~ 'nobody'",
+        "sort": "title"
+      }
+    },
+    {
+      "name": "macro-nested-any",
+      "method": "GET",
+      "path": "/api/collections/eposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "@collection.articles.owner.name ?= 'Bob'",
+        "sort": "title"
+      }
+    },
+    {
+      "name": "macro-nested-none",
+      "method": "GET",
+      "path": "/api/collections/eposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "@collection.articles.owner.name ?= 'Alice'",
+        "sort": "title"
+      }
+    },
+    {
+      "name": "macro-alias",
+      "method": "GET",
+      "path": "/api/collections/articles/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "@collection.members:m.name ?= 'Bob'",
+        "sort": "title"
+      }
+    },
+    {
+      "name": "macro-right-side",
+      "method": "GET",
+      "path": "/api/collections/articles/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "'Alice' ?= @collection.members.name",
+        "sort": "title"
+      }
+    },
+    {
+      "name": "macro-empty-any",
+      "method": "GET",
+      "path": "/api/collections/articles/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "@collection.members.name ?= 'Nobody'",
+        "sort": "title"
+      }
+    },
+    {
+      "name": "macro-bad-field",
+      "method": "GET",
+      "path": "/api/collections/articles/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "@collection.members.nope ?= 'x'"
+      }
+    },
+    {
+      "name": "macro-bad-collection",
+      "method": "GET",
+      "path": "/api/collections/articles/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "@collection.nope.name ?= 'x'"
+      }
+    },
+    {
+      "name": "filter-bad-field",
+      "method": "GET",
+      "path": "/api/collections/articles/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "nope=1"
+      }
+    },
+    {
+      "name": "filter-syntax-error",
+      "method": "GET",
+      "path": "/api/collections/articles/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "title="
+      }
+    },
+    {
+      "name": "collections-filter-name",
+      "method": "GET",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "name ~ 'post'",
+        "sort": "name"
+      }
+    },
+    {
+      "name": "collections-filter-system",
+      "method": "GET",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "system = false",
+        "sort": "name"
+      }
+    },
+    {
+      "name": "collections-filter-type",
+      "method": "GET",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "type = 'auth'",
+        "sort": "name"
+      }
+    },
+    {
+      "name": "collections-filter-bad",
+      "method": "GET",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "nope = 1",
+        "sort": "name"
+      }
+    },
+    {
+      "name": "collections-filter-parens",
+      "method": "GET",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "(system = false && name ~ 'e') || name = '_superusers'",
+        "sort": "name"
+      }
+    }
+  ]
+}

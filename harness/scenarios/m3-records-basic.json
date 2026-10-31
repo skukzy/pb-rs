@@ -1,0 +1,92 @@
+{
+  "name": "m3-records-basic",
+  "requests": [
+    {
+      "name": "login",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-with-password",
+      "body": "{\"identity\": \"admin@example.com\", \"password\": \"pass12345678\"}",
+      "save": {
+        "token": "token"
+      }
+    },
+    {
+      "name": "create-collection",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"posts\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}, {\"name\": \"count\", \"type\": \"number\"}]}"
+    },
+    {
+      "name": "create-record",
+      "method": "POST",
+      "path": "/api/collections/posts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"title\": \"hello\", \"count\": 5}",
+      "save": {
+        "rid": "id"
+      }
+    },
+    {
+      "name": "get-record",
+      "method": "GET",
+      "path": "/api/collections/posts/records/{{rid}}",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "list-records",
+      "method": "GET",
+      "path": "/api/collections/posts/records?page=1&perPage=30&sort=-@rowid",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "update-record",
+      "method": "PATCH",
+      "path": "/api/collections/posts/records/{{rid}}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"title\": \"updated\", \"count\": 10}"
+    },
+    {
+      "name": "get-record-2",
+      "method": "GET",
+      "path": "/api/collections/posts/records/{{rid}}",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "delete-record",
+      "method": "DELETE",
+      "path": "/api/collections/posts/records/{{rid}}",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "get-deleted",
+      "method": "GET",
+      "path": "/api/collections/posts/records/{{rid}}",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "list-empty",
+      "method": "GET",
+      "path": "/api/collections/posts/records?page=1&perPage=30",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    }
+  ]
+}

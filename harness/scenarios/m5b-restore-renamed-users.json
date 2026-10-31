@@ -1,0 +1,101 @@
+{
+  "name": "m5b-restore-renamed-users",
+  "requests": [
+    {
+      "name": "login",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-with-password",
+      "body": "{\"identity\": \"admin@example.com\", \"password\": \"pass12345678\"}",
+      "save": {
+        "token": "token"
+      }
+    },
+    {
+      "name": "rename-users",
+      "method": "PATCH",
+      "path": "/api/collections/users",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"name\": \"users_renamed\"}"
+    },
+    {
+      "name": "create-user",
+      "method": "POST",
+      "path": "/api/collections/users_renamed/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"email\": \"renamed@example.com\", \"password\": \"pass12345678\", \"passwordConfirm\": \"pass12345678\"}",
+      "save": {
+        "recordId": "id"
+      }
+    },
+    {
+      "name": "create-backup",
+      "method": "POST",
+      "path": "/api/backups",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"name\": \"restore-renamed.zip\"}"
+    },
+    {
+      "name": "delete-user",
+      "method": "DELETE",
+      "path": "/api/collections/users_renamed/records/{{recordId}}",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "restore",
+      "method": "POST",
+      "path": "/api/backups/restore-renamed.zip/restore",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "login-after-restore",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-with-password",
+      "body": "{\"identity\": \"admin@example.com\", \"password\": \"pass12345678\"}",
+      "delayMs": 3000,
+      "save": {
+        "token": "token"
+      }
+    },
+    {
+      "name": "list-renamed-users",
+      "method": "GET",
+      "path": "/api/collections/users_renamed/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "sort": "email"
+      }
+    },
+    {
+      "name": "old-users-path",
+      "method": "GET",
+      "path": "/api/collections/users",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "list-renamed-collection",
+      "method": "GET",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "name='users_renamed'",
+        "sort": "name"
+      }
+    }
+  ]
+}

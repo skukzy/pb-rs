@@ -1,0 +1,48 @@
+{
+  "name": "m2e-import",
+  "requests": [
+    {
+      "name": "login",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-with-password",
+      "body": "{\"identity\": \"admin@example.com\", \"password\": \"pass12345678\"}",
+      "save": {
+        "token": "token"
+      }
+    },
+    {
+      "name": "import-one",
+      "method": "PUT",
+      "path": "/api/collections/import",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"collections\": [{\"name\": \"imported1\", \"type\": \"base\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}]}], \"deleteMissing\": false}"
+    },
+    {
+      "name": "get-imported",
+      "method": "GET",
+      "path": "/api/collections/imported1",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "import-empty",
+      "method": "PUT",
+      "path": "/api/collections/import",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"collections\": []}"
+    },
+    {
+      "name": "collections-after",
+      "method": "GET",
+      "path": "/api/collections?sort=name&perPage=200",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    }
+  ]
+}

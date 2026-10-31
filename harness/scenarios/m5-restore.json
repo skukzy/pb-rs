@@ -1,0 +1,85 @@
+{
+  "name": "m5-restore",
+  "requests": [
+    {
+      "name": "login",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-with-password",
+      "body": "{\"identity\": \"admin@example.com\", \"password\": \"pass12345678\"}",
+      "save": {
+        "token": "token"
+      }
+    },
+    {
+      "name": "create-collection",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"name\": \"restoretest\", \"type\": \"base\", \"listRule\": \"\", \"viewRule\": \"\", \"createRule\": \"\", \"deleteRule\": \"\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}]}"
+    },
+    {
+      "name": "create-record",
+      "method": "POST",
+      "path": "/api/collections/restoretest/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"title\": \"keep me\"}",
+      "save": {
+        "recordId": "id"
+      }
+    },
+    {
+      "name": "create-backup",
+      "method": "POST",
+      "path": "/api/backups",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"name\": \"restore-probe.zip\"}"
+    },
+    {
+      "name": "delete-record",
+      "method": "DELETE",
+      "path": "/api/collections/restoretest/records/{{recordId}}",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "list-after-delete",
+      "method": "GET",
+      "path": "/api/collections/restoretest/records",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "restore",
+      "method": "POST",
+      "path": "/api/backups/restore-probe.zip/restore",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "list-after-restore",
+      "method": "GET",
+      "path": "/api/collections/restoretest/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "delayMs": 3000
+    },
+    {
+      "name": "list-backups",
+      "method": "GET",
+      "path": "/api/backups",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    }
+  ]
+}

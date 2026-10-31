@@ -1,0 +1,31 @@
+{
+  "name": "m5-oauth2-redirect",
+  "requests": [
+    {
+      "name": "GET no state",
+      "method": "GET",
+      "path": "/api/oauth2-redirect",
+      "query": { "code": "123" }
+    },
+    {
+      "name": "GET bogus state",
+      "method": "GET",
+      "path": "/api/oauth2-redirect",
+      "query": { "code": "123", "state": "missing" }
+    },
+    {
+      "name": "POST no state",
+      "method": "POST",
+      "path": "/api/oauth2-redirect",
+      "body": "code=123",
+      "headers": { "content-type": "application/x-www-form-urlencoded" }
+    },
+    {
+      "name": "POST bogus state",
+      "method": "POST",
+      "path": "/api/oauth2-redirect",
+      "body": "code=123&state=missing",
+      "headers": { "content-type": "application/x-www-form-urlencoded" }
+    }
+  ]
+}

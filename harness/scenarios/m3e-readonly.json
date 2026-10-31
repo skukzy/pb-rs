@@ -1,0 +1,102 @@
+{
+  "name": "m3e-readonly",
+  "requests": [
+    {
+      "name": "login",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-with-password",
+      "body": "{\"identity\": \"admin@example.com\", \"password\": \"pass12345678\"}",
+      "save": {
+        "token": "token"
+      }
+    },
+    {
+      "name": "list-posts-expand",
+      "method": "GET",
+      "path": "/api/collections/eposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "sort": "title",
+        "expand": "author.mentor,tags"
+      }
+    },
+    {
+      "name": "list-posts-filter",
+      "method": "GET",
+      "path": "/api/collections/eposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "author.name='alice' || tags.name='sqlite'",
+        "sort": "-views",
+        "fields": "title,views"
+      }
+    },
+    {
+      "name": "list-posts-page",
+      "method": "GET",
+      "path": "/api/collections/eposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "page": "2",
+        "perPage": "2",
+        "sort": "title"
+      }
+    },
+    {
+      "name": "list-members",
+      "method": "GET",
+      "path": "/api/collections/members/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "sort": "name"
+      }
+    },
+    {
+      "name": "list-tags",
+      "method": "GET",
+      "path": "/api/collections/tags/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "sort": "name"
+      }
+    },
+    {
+      "name": "list-articles-superuser",
+      "method": "GET",
+      "path": "/api/collections/articles/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "expand": "owner"
+      }
+    },
+    {
+      "name": "alice-login",
+      "method": "POST",
+      "path": "/api/collections/members/auth-with-password",
+      "body": "{\"identity\": \"alice@example.com\", \"password\": \"alicepass123\"}",
+      "save": {
+        "atoken": "token"
+      }
+    },
+    {
+      "name": "alice-list-articles",
+      "method": "GET",
+      "path": "/api/collections/articles/records",
+      "headers": {
+        "authorization": "{{atoken}}"
+      }
+    }
+  ]
+}

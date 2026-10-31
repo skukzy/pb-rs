@@ -1,0 +1,141 @@
+{
+  "name": "m2-auth",
+  "requests": [
+    {
+      "name": "health",
+      "method": "GET",
+      "path": "/api/health"
+    },
+    {
+      "name": "login-bad-password",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-with-password",
+      "body": "{\"identity\":\"admin@example.com\",\"password\":\"wrong-password\"}"
+    },
+    {
+      "name": "login-unknown-identity",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-with-password",
+      "body": "{\"identity\":\"nobody@example.com\",\"password\":\"pass12345678\"}"
+    },
+    {
+      "name": "login-missing-body-field",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-with-password",
+      "body": "{\"identity\":\"admin@example.com\"}"
+    },
+    {
+      "name": "login-unknown-collection",
+      "method": "POST",
+      "path": "/api/collections/nope/auth-with-password",
+      "body": "{\"identity\":\"admin@example.com\",\"password\":\"pass12345678\"}"
+    },
+    {
+      "name": "login-ok",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-with-password",
+      "body": "{\"identity\":\"admin@example.com\",\"password\":\"pass12345678\"}",
+      "save": {
+        "token": "token"
+      }
+    },
+    {
+      "name": "auth-refresh",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-refresh",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "settings-anon",
+      "method": "GET",
+      "path": "/api/settings"
+    },
+    {
+      "name": "settings-bad-token",
+      "method": "GET",
+      "path": "/api/settings",
+      "headers": {
+        "authorization": "not-a-token"
+      }
+    },
+    {
+      "name": "settings-auth",
+      "method": "GET",
+      "path": "/api/settings",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "collections-auth",
+      "method": "GET",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "collection-superusers",
+      "method": "GET",
+      "path": "/api/collections/_superusers",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "collection-users",
+      "method": "GET",
+      "path": "/api/collections/users",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "collection-missing",
+      "method": "GET",
+      "path": "/api/collections/nope",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "auth-methods-superusers",
+      "method": "GET",
+      "path": "/api/collections/_superusers/auth-methods"
+    },
+    {
+      "name": "collections-skiptotal",
+      "method": "GET",
+      "path": "/api/collections?page=1&perPage=1000&skipTotal=1",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "collections-paged",
+      "method": "GET",
+      "path": "/api/collections?page=1&perPage=2",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "meta-scaffolds",
+      "method": "GET",
+      "path": "/api/collections/meta/scaffolds",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "meta-oauth2-providers",
+      "method": "GET",
+      "path": "/api/collections/meta/oauth2-providers",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    }
+  ]
+}

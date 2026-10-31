@@ -1,0 +1,202 @@
+{
+  "name": "m5-logs",
+  "requests": [
+    {
+      "name": "login",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-with-password",
+      "body": "{\"identity\":\"admin@example.com\",\"password\":\"pass12345678\"}",
+      "save": {
+        "token": "token"
+      }
+    },
+    {
+      "name": "probe-health",
+      "method": "GET",
+      "path": "/api/health",
+      "query": {
+        "probe": "m5logs"
+      }
+    },
+    {
+      "name": "list-filtered",
+      "method": "GET",
+      "path": "/api/logs",
+      "query": {
+        "filter": "data.url=\"/api/health?probe=m5logs\"",
+        "perPage": "10"
+      },
+      "headers": {
+        "Authorization": "{{token}}"
+      },
+      "delayMs": 4200,
+      "save": {
+        "logId": "items.0.id"
+      }
+    },
+    {
+      "name": "view-filtered",
+      "method": "GET",
+      "path": "/api/logs/{{logId}}",
+      "headers": {
+        "Authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "stats-filtered",
+      "method": "GET",
+      "path": "/api/logs/stats",
+      "query": {
+        "filter": "data.url=\"/api/health?probe=m5logs\""
+      },
+      "headers": {
+        "Authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "list-skip-total",
+      "method": "GET",
+      "path": "/api/logs",
+      "query": {
+        "filter": "data.url=\"/api/health?probe=m5logs\"",
+        "skipTotal": "true",
+        "perPage": "1"
+      },
+      "headers": {
+        "Authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "list-sort",
+      "method": "GET",
+      "path": "/api/logs",
+      "query": {
+        "filter": "data.url=\"/api/health?probe=m5logs\"",
+        "sort": "-created"
+      },
+      "headers": {
+        "Authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "list-perpage-1000",
+      "method": "GET",
+      "path": "/api/logs",
+      "query": {
+        "filter": "data.url=\"/api/health?probe=m5logs\"",
+        "perPage": "1000"
+      },
+      "headers": {
+        "Authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "bad-filter-bare",
+      "method": "GET",
+      "path": "/api/logs",
+      "query": {
+        "filter": "level"
+      },
+      "headers": {
+        "Authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "bad-filter-unknown",
+      "method": "GET",
+      "path": "/api/logs",
+      "query": {
+        "filter": "foo=1"
+      },
+      "headers": {
+        "Authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "bad-sort",
+      "method": "GET",
+      "path": "/api/logs",
+      "query": {
+        "sort": "foo"
+      },
+      "headers": {
+        "Authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "bad-page",
+      "method": "GET",
+      "path": "/api/logs",
+      "query": {
+        "page": "x"
+      },
+      "headers": {
+        "Authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "bad-skip-total",
+      "method": "GET",
+      "path": "/api/logs",
+      "query": {
+        "skipTotal": "x"
+      },
+      "headers": {
+        "Authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "truncate",
+      "method": "DELETE",
+      "path": "/api/logs",
+      "headers": {
+        "Authorization": "{{token}}"
+      },
+      "delayMs": 4200
+    },
+    {
+      "name": "list-after-truncate",
+      "method": "GET",
+      "path": "/api/logs",
+      "query": {
+        "perPage": "1"
+      },
+      "headers": {
+        "Authorization": "{{token}}"
+      },
+      "delayMs": 4200
+    },
+    {
+      "name": "probe-health-2",
+      "method": "GET",
+      "path": "/api/health",
+      "query": {
+        "probe": "m5logs2"
+      }
+    },
+    {
+      "name": "list-after-truncate-2",
+      "method": "GET",
+      "path": "/api/logs",
+      "query": {
+        "filter": "data.url=\"/api/health?probe=m5logs2\"",
+        "perPage": "10"
+      },
+      "headers": {
+        "Authorization": "{{token}}"
+      },
+      "delayMs": 4200
+    },
+    {
+      "name": "stats-after-truncate-2",
+      "method": "GET",
+      "path": "/api/logs/stats",
+      "query": {
+        "filter": "data.url=\"/api/health?probe=m5logs2\""
+      },
+      "headers": {
+        "Authorization": "{{token}}"
+      }
+    }
+  ]
+}

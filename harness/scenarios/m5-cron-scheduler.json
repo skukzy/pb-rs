@@ -1,0 +1,58 @@
+{
+  "name": "m5-cron-scheduler",
+  "requests": [
+    {
+      "name": "login",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-with-password",
+      "body": "{\"identity\": \"admin@example.com\", \"password\": \"pass12345678\"}",
+      "save": {
+        "token": "token"
+      }
+    },
+    {
+      "name": "patch-settings-cron",
+      "method": "PATCH",
+      "path": "/api/settings",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"backups\": {\"cron\": \"* * * * *\", \"cronMaxKeep\": 1}}"
+    },
+    {
+      "name": "list-jobs-configured",
+      "method": "GET",
+      "path": "/api/crons",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "list-backups-after-tick",
+      "method": "GET",
+      "path": "/api/backups",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "waitForNextMinute": true,
+      "delayMs": 2500
+    },
+    {
+      "name": "patch-settings-cron-off",
+      "method": "PATCH",
+      "path": "/api/settings",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"backups\": {\"cron\": \"\", \"cronMaxKeep\": 1}}"
+    },
+    {
+      "name": "list-jobs-disabled",
+      "method": "GET",
+      "path": "/api/crons",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    }
+  ]
+}

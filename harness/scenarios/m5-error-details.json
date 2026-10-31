@@ -1,0 +1,433 @@
+{
+  "name": "m5-error-details",
+  "requests": [
+    {
+      "name": "login",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-with-password",
+      "body": "{\"identity\":\"admin@example.com\",\"password\":\"pass12345678\"}",
+      "save": {
+        "token": "token"
+      }
+    },
+    {
+      "name": "create-collection",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"name\":\"errdet\",\"type\":\"base\",\"listRule\":\"\",\"viewRule\":\"\",\"createRule\":\"\",\"updateRule\":\"\",\"deleteRule\":\"\",\"fields\":[{\"name\":\"title\",\"type\":\"text\",\"required\":true},{\"name\":\"email\",\"type\":\"email\"},{\"name\":\"count\",\"type\":\"number\",\"min\":1}]}"
+    },
+    {
+      "name": "record-create-empty",
+      "method": "POST",
+      "path": "/api/collections/errdet/records",
+      "query": {
+        "probe": "errdet-create-empty"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{}"
+    },
+    {
+      "name": "record-create-email",
+      "method": "POST",
+      "path": "/api/collections/errdet/records",
+      "query": {
+        "probe": "errdet-create-email"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"title\":\"ok\",\"email\":\"nope\"}"
+    },
+    {
+      "name": "record-create-count",
+      "method": "POST",
+      "path": "/api/collections/errdet/records",
+      "query": {
+        "probe": "errdet-create-count"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"title\":\"ok\",\"count\":0}"
+    },
+    {
+      "name": "record-filter-unknown",
+      "method": "GET",
+      "path": "/api/collections/errdet/records",
+      "query": {
+        "filter": "foo=1",
+        "probe": "errdet-filter-unknown"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "record-filter-relation",
+      "method": "GET",
+      "path": "/api/collections/errdet/records",
+      "query": {
+        "filter": "title.foo=1",
+        "probe": "errdet-filter-relation"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "record-filter-quote",
+      "method": "GET",
+      "path": "/api/collections/errdet/records",
+      "query": {
+        "filter": "title='unterminated",
+        "probe": "errdet-filter-quote"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "record-sort-unknown",
+      "method": "GET",
+      "path": "/api/collections/errdet/records",
+      "query": {
+        "sort": "foo",
+        "probe": "errdet-sort-unknown"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "record-sort-relation",
+      "method": "GET",
+      "path": "/api/collections/errdet/records",
+      "query": {
+        "sort": "title.foo",
+        "probe": "errdet-sort-relation"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "auth-empty",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-with-password",
+      "query": {
+        "probe": "errdet-auth-empty"
+      },
+      "body": "{}"
+    },
+    {
+      "name": "collection-import-invalid",
+      "method": "PUT",
+      "path": "/api/collections/import",
+      "query": {
+        "probe": "errdet-import"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"collections\":[{\"name\":\"BAD NAME\",\"type\":\"base\",\"fields\":[]}]}"
+    },
+    {
+      "name": "settings-cron",
+      "method": "PATCH",
+      "path": "/api/settings",
+      "query": {
+        "probe": "errdet-settings-cron"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"backups\":{\"cron\":\"bad\"}}"
+    },
+    {
+      "name": "collection-missing",
+      "method": "GET",
+      "path": "/api/collections/nope",
+      "query": {
+        "probe": "errdet-collection-missing"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "record-missing",
+      "method": "GET",
+      "path": "/api/collections/errdet/records/aaaaaaaaaaaaaaa",
+      "query": {
+        "probe": "errdet-record-missing"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "logs-filter-unknown",
+      "method": "GET",
+      "path": "/api/logs",
+      "query": {
+        "filter": "foo=1",
+        "probe": "errdet-logs-filter"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "logs-sort-unknown",
+      "method": "GET",
+      "path": "/api/logs",
+      "query": {
+        "sort": "nope",
+        "probe": "errdet-logs-sort"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "wrong-method-delete",
+      "method": "DELETE",
+      "path": "/api/backups/x.zip/restore",
+      "query": {
+        "probe": "errdet-wrong-method-delete"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "wrong-method-get",
+      "method": "GET",
+      "path": "/api/backups/x.zip/restore",
+      "query": {
+        "probe": "errdet-wrong-method-get"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "flush-logs",
+      "method": "GET",
+      "path": "/api/health",
+      "query": {
+        "probe": "errdet-flush"
+      },
+      "delayMs": 4200
+    },
+    {
+      "name": "log-record-create-empty",
+      "method": "GET",
+      "path": "/api/logs",
+      "query": {
+        "filter": "data.url~\"errdet-create-empty\"",
+        "perPage": "1"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "log-record-create-email",
+      "method": "GET",
+      "path": "/api/logs",
+      "query": {
+        "filter": "data.url~\"errdet-create-email\"",
+        "perPage": "1"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "log-record-create-count",
+      "method": "GET",
+      "path": "/api/logs",
+      "query": {
+        "filter": "data.url~\"errdet-create-count\"",
+        "perPage": "1"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "log-record-filter-unknown",
+      "method": "GET",
+      "path": "/api/logs",
+      "query": {
+        "filter": "data.url~\"errdet-filter-unknown\"",
+        "perPage": "1"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "log-record-filter-relation",
+      "method": "GET",
+      "path": "/api/logs",
+      "query": {
+        "filter": "data.url~\"errdet-filter-relation\"",
+        "perPage": "1"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "log-record-filter-quote",
+      "method": "GET",
+      "path": "/api/logs",
+      "query": {
+        "filter": "data.url~\"errdet-filter-quote\"",
+        "perPage": "1"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "log-record-sort-unknown",
+      "method": "GET",
+      "path": "/api/logs",
+      "query": {
+        "filter": "data.url~\"errdet-sort-unknown\"",
+        "perPage": "1"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "log-record-sort-relation",
+      "method": "GET",
+      "path": "/api/logs",
+      "query": {
+        "filter": "data.url~\"errdet-sort-relation\"",
+        "perPage": "1"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "log-auth-empty",
+      "method": "GET",
+      "path": "/api/logs",
+      "query": {
+        "filter": "data.url~\"errdet-auth-empty\"",
+        "perPage": "1"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "log-import-invalid",
+      "method": "GET",
+      "path": "/api/logs",
+      "query": {
+        "filter": "data.url~\"errdet-import\"",
+        "perPage": "1"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "log-settings-cron",
+      "method": "GET",
+      "path": "/api/logs",
+      "query": {
+        "filter": "data.url~\"errdet-settings-cron\"",
+        "perPage": "1"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "log-collection-missing",
+      "method": "GET",
+      "path": "/api/logs",
+      "query": {
+        "filter": "data.url~\"errdet-collection-missing\"",
+        "perPage": "1"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "log-record-missing",
+      "method": "GET",
+      "path": "/api/logs",
+      "query": {
+        "filter": "data.url~\"errdet-record-missing\"",
+        "perPage": "1"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "log-logs-filter-unknown",
+      "method": "GET",
+      "path": "/api/logs",
+      "query": {
+        "filter": "data.url~\"errdet-logs-filter\"",
+        "perPage": "1"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "log-logs-sort-unknown",
+      "method": "GET",
+      "path": "/api/logs",
+      "query": {
+        "filter": "data.url~\"errdet-logs-sort\"",
+        "perPage": "1"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "log-wrong-method-delete",
+      "method": "GET",
+      "path": "/api/logs",
+      "query": {
+        "filter": "data.url~\"errdet-wrong-method-delete\"",
+        "perPage": "1"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "log-wrong-method-get",
+      "method": "GET",
+      "path": "/api/logs",
+      "query": {
+        "filter": "data.url~\"errdet-wrong-method-get\"",
+        "perPage": "1"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    }
+  ]
+}

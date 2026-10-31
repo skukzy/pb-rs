@@ -1,0 +1,246 @@
+{
+  "name": "m2d-collection-update",
+  "requests": [
+    {
+      "name": "login",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-with-password",
+      "body": "{\"identity\": \"admin@example.com\", \"password\": \"pass12345678\"}",
+      "save": {
+        "token": "token"
+      }
+    },
+    {
+      "name": "create-posts",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"posts\", \"fields\": [{\"name\": \"title\", \"type\": \"text\", \"required\": true, \"min\": 3, \"max\": 120}, {\"name\": \"status\", \"type\": \"select\", \"values\": [\"draft\", \"published\"], \"maxSelect\": 1}, {\"name\": \"tags\", \"type\": \"select\", \"values\": [\"a\", \"b\"], \"maxSelect\": 2}], \"indexes\": [\"CREATE UNIQUE INDEX idx_posts_title ON mdposts (title)\"]}"
+    },
+    {
+      "name": "get-posts",
+      "method": "GET",
+      "path": "/api/collections/mdposts",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "update-rename",
+      "method": "PATCH",
+      "path": "/api/collections/mdposts",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"name\": \"articles\", \"fields\": [{\"id\": \"text724990059\", \"name\": \"headline\", \"type\": \"text\", \"required\": true, \"min\": 3, \"max\": 120}], \"indexes\": [\"CREATE UNIQUE INDEX idx_posts_title ON mdarticles (headline)\"]}"
+    },
+    {
+      "name": "get-articles",
+      "method": "GET",
+      "path": "/api/collections/mdarticles",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "update-add-field",
+      "method": "PATCH",
+      "path": "/api/collections/mdarticles",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"fields\": [{\"id\": \"text724990059\", \"name\": \"headline\", \"type\": \"text\", \"required\": true, \"min\": 3, \"max\": 120}, {\"name\": \"views\", \"type\": \"number\", \"onlyInt\": true, \"min\": 0}]}"
+    },
+    {
+      "name": "get-articles-2",
+      "method": "GET",
+      "path": "/api/collections/mdarticles",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "update-remove-field",
+      "method": "PATCH",
+      "path": "/api/collections/mdarticles",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"fields\": [{\"id\": \"text724990059\", \"name\": \"headline\", \"type\": \"text\", \"required\": true, \"min\": 3, \"max\": 120}]}"
+    },
+    {
+      "name": "update-single-to-multi",
+      "method": "PATCH",
+      "path": "/api/collections/mdarticles",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"fields\": [{\"id\": \"text724990059\", \"name\": \"headline\", \"type\": \"text\", \"required\": true, \"min\": 3, \"max\": 120}, {\"name\": \"status\", \"type\": \"select\", \"values\": [\"draft\", \"published\"], \"maxSelect\": 2}]}"
+    },
+    {
+      "name": "update-multi-to-single",
+      "method": "PATCH",
+      "path": "/api/collections/mdarticles",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"fields\": [{\"id\": \"text724990059\", \"name\": \"headline\", \"type\": \"text\", \"required\": true, \"min\": 3, \"max\": 120}, {\"name\": \"status\", \"type\": \"select\", \"values\": [\"draft\", \"published\"], \"maxSelect\": 1}]}"
+    },
+    {
+      "name": "update-type-change",
+      "method": "PATCH",
+      "path": "/api/collections/mdarticles",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"fields\": [{\"id\": \"text724990059\", \"name\": \"headline\", \"type\": \"number\"}]}"
+    },
+    {
+      "name": "update-system-field-rename",
+      "method": "PATCH",
+      "path": "/api/collections/_superusers",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"fields\": [{\"id\": \"text3208210256\", \"name\": \"id2\", \"type\": \"text\", \"system\": true, \"primaryKey\": true, \"required\": true, \"min\": 15, \"max\": 15, \"pattern\": \"^[a-z0-9]+$\"}]}"
+    },
+    {
+      "name": "update-system-flag",
+      "method": "PATCH",
+      "path": "/api/collections/mdarticles",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"system\": true}"
+    },
+    {
+      "name": "update-collection-type",
+      "method": "PATCH",
+      "path": "/api/collections/mdarticles",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"auth\"}"
+    },
+    {
+      "name": "update-system-name",
+      "method": "PATCH",
+      "path": "/api/collections/_superusers",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"name\": \"superusers2\"}"
+    },
+    {
+      "name": "update-system-rule",
+      "method": "PATCH",
+      "path": "/api/collections/_superusers",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"listRule\": \"id != ''\"}"
+    },
+    {
+      "name": "update-missing",
+      "method": "PATCH",
+      "path": "/api/collections/nope",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"name\": \"x\"}"
+    },
+    {
+      "name": "update-bad-fields",
+      "method": "PATCH",
+      "path": "/api/collections/mdarticles",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"fields\": \"bad\"}"
+    },
+    {
+      "name": "update-fields-null-item",
+      "method": "PATCH",
+      "path": "/api/collections/mdarticles",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"fields\": [null]}"
+    },
+    {
+      "name": "update-index-invalid",
+      "method": "PATCH",
+      "path": "/api/collections/mdarticles",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"fields\": [{\"id\": \"text724990059\", \"name\": \"headline\", \"type\": \"text\", \"required\": true, \"min\": 3, \"max\": 120}], \"indexes\": [\"CREATE INDEX\"]}"
+    },
+    {
+      "name": "update-index-unknown-col",
+      "method": "PATCH",
+      "path": "/api/collections/mdarticles",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"fields\": [{\"id\": \"text724990059\", \"name\": \"headline\", \"type\": \"text\", \"required\": true, \"min\": 3, \"max\": 120}], \"indexes\": [\"CREATE UNIQUE INDEX idx_nope ON mdarticles (nope)\"]}"
+    },
+    {
+      "name": "create-auth",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"auth\", \"name\": \"members\"}",
+      "save": {
+        "members_id": "id"
+      }
+    },
+    {
+      "name": "update-auth-options",
+      "method": "PATCH",
+      "path": "/api/collections/members",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"authToken\": {\"duration\": 120}, \"passwordAuth\": {\"enabled\": false}}"
+    },
+    {
+      "name": "get-auth-options",
+      "method": "GET",
+      "path": "/api/collections/members",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "update-auth-null",
+      "method": "PATCH",
+      "path": "/api/collections/members",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"authToken\": null}"
+    },
+    {
+      "name": "update-remove-sys-index",
+      "method": "PATCH",
+      "path": "/api/collections/_superusers",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"indexes\": []}"
+    },
+    {
+      "name": "collections-after",
+      "method": "GET",
+      "path": "/api/collections?sort=name&perPage=200",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    }
+  ]
+}

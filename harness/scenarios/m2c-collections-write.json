@@ -1,0 +1,737 @@
+{
+  "name": "m2c-collections-write",
+  "requests": [
+    {
+      "name": "login",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-with-password",
+      "body": "{\"identity\": \"admin@example.com\", \"password\": \"pass12345678\"}",
+      "save": {
+        "token": "token"
+      }
+    },
+    {
+      "name": "create-base-basic",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"posts\", \"fields\": [{\"name\": \"title\", \"type\": \"text\", \"required\": true, \"min\": 3, \"max\": 120}, {\"name\": \"views\", \"type\": \"number\", \"onlyInt\": true, \"min\": 0}, {\"name\": \"published\", \"type\": \"bool\"}, {\"name\": \"slug\", \"type\": \"text\", \"autogeneratePattern\": \"[a-z0-9]{10}\"}], \"indexes\": [\"CREATE UNIQUE INDEX idx_posts_title ON other (title)\"], \"listRule\": \"\", \"viewRule\": \"published = true\", \"createRule\": null, \"updateRule\": null, \"deleteRule\": null}",
+      "save": {
+        "posts_id": "id"
+      }
+    },
+    {
+      "name": "get-posts",
+      "method": "GET",
+      "path": "/api/collections/posts",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "create-auth-basic",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"auth\", \"name\": \"members\", \"fields\": [{\"name\": \"name\", \"type\": \"text\", \"max\": 100}], \"authRule\": \"verified = true\", \"otp\": {\"enabled\": true, \"duration\": 600, \"length\": 6}, \"authToken\": {\"duration\": 600}, \"passwordAuth\": {\"identityFields\": [\"email\"]}}",
+      "save": {
+        "members_id": "id"
+      }
+    },
+    {
+      "name": "get-members",
+      "method": "GET",
+      "path": "/api/collections/members",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "create-explicit-id",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"custom\", \"id\": \"my_custom_id\"}"
+    },
+    {
+      "name": "create-system-flag",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"sysone\", \"system\": true}"
+    },
+    {
+      "name": "create-client-timestamps",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"tsone\", \"created\": \"2020-01-01 00:00:00.000Z\", \"updated\": \"2020-01-01 00:00:00.000Z\"}"
+    },
+    {
+      "name": "create-fields-empty",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"auth\", \"name\": \"emptyfields\", \"fields\": []}"
+    },
+    {
+      "name": "create-fields-null",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"nullfields\", \"fields\": null, \"indexes\": null}"
+    },
+    {
+      "name": "create-type-missing",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"name\": \"notype\"}"
+    },
+    {
+      "name": "create-type-null",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": null, \"name\": \"nulltype\"}"
+    },
+    {
+      "name": "create-type-empty",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"\", \"name\": \"emptytype\"}"
+    },
+    {
+      "name": "create-field-replaced-by-name",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"replaced\", \"fields\": [{\"name\": \"title\", \"type\": \"text\", \"help\": \"first\"}, {\"name\": \"title\", \"type\": \"text\", \"help\": \"second\"}]}"
+    },
+    {
+      "name": "create-field-explicit-id",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"explicitid\", \"fields\": [{\"id\": \"sameid\", \"name\": \"x\", \"type\": \"text\"}, {\"id\": \"sameid\", \"name\": \"y\", \"type\": \"text\"}]}"
+    },
+    {
+      "name": "create-no-body",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "create-null-body",
+      "method": "POST",
+      "path": "/api/collections",
+      "body": "null",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "create-array-body",
+      "method": "POST",
+      "path": "/api/collections",
+      "body": "[]",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "create-string-body",
+      "method": "POST",
+      "path": "/api/collections",
+      "body": "\"x\"",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "create-bad-fields-type",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"badfields\", \"fields\": \"bad\"}"
+    },
+    {
+      "name": "create-bad-indexes-type",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"badindexes\", \"indexes\": [1]}"
+    },
+    {
+      "name": "create-text-body",
+      "method": "POST",
+      "path": "/api/collections",
+      "body": "{\"type\":\"base\"}",
+      "headers": {
+        "authorization": "{{token}}",
+        "content-type": "text/plain"
+      }
+    },
+    {
+      "name": "create-name-taken",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"users\"}"
+    },
+    {
+      "name": "create-name-taken-case",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"USERS\"}"
+    },
+    {
+      "name": "create-name-is-id",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"{{posts_id}}\"}"
+    },
+    {
+      "name": "create-name-internal-table",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"_params\"}"
+    },
+    {
+      "name": "create-name-via",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"a_via_b\"}"
+    },
+    {
+      "name": "create-name-space",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"a b\"}"
+    },
+    {
+      "name": "create-name-empty",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"\"}"
+    },
+    {
+      "name": "create-bad-type",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"nope\", \"name\": \"badtype\"}"
+    },
+    {
+      "name": "create-bad-id",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"badid\", \"id\": \"a-b\"}"
+    },
+    {
+      "name": "create-taken-id",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"takenid\", \"id\": \"{{posts_id}}\"}"
+    },
+    {
+      "name": "create-dup-field-names",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"dupnames\", \"fields\": [{\"name\": \"x\", \"type\": \"text\"}, {\"name\": \"X\", \"type\": \"number\"}]}"
+    },
+    {
+      "name": "create-reserved-auth-key",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"auth\", \"name\": \"reserved\", \"fields\": [{\"name\": \"passwordConfirm\", \"type\": \"text\"}]}"
+    },
+    {
+      "name": "create-relation-missing",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"relmissing\", \"fields\": [{\"name\": \"r\", \"type\": \"relation\", \"collectionId\": \"nope\"}]}"
+    },
+    {
+      "name": "create-relation-empty",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"relempty\", \"fields\": [{\"name\": \"r\", \"type\": \"relation\"}]}"
+    },
+    {
+      "name": "create-select-no-values",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"selectnone\", \"fields\": [{\"name\": \"s\", \"type\": \"select\"}]}"
+    },
+    {
+      "name": "create-text-pk-bad-name",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"badpk\", \"fields\": [{\"name\": \"x\", \"type\": \"text\", \"primaryKey\": true, \"pattern\": \"^x$\"}]}"
+    },
+    {
+      "name": "create-number-onlyint",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"onlyint\", \"fields\": [{\"name\": \"n\", \"type\": \"number\", \"onlyInt\": true, \"min\": 1.5}]}"
+    },
+    {
+      "name": "create-file-bad-thumb",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"badthumb\", \"fields\": [{\"name\": \"f\", \"type\": \"file\", \"thumbs\": [\"0x0\", \"bogus\"]}]}"
+    },
+    {
+      "name": "create-email-domains-conflict",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"domconflict\", \"fields\": [{\"name\": \"e\", \"type\": \"email\", \"exceptDomains\": [\"a.com\"], \"onlyDomains\": [\"b.com\"]}]}"
+    },
+    {
+      "name": "create-email-bad-domains",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"baddomains\", \"fields\": [{\"name\": \"e\", \"type\": \"email\", \"exceptDomains\": [\"nope\", \"a.com\"]}]}"
+    },
+    {
+      "name": "create-field-bad-name",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"badfieldname\", \"fields\": [{\"name\": \"collectionId\", \"type\": \"text\"}]}"
+    },
+    {
+      "name": "create-field-bad-type",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"badfieldtype\", \"fields\": [{\"name\": \"x\", \"type\": \"nope\"}]}"
+    },
+    {
+      "name": "create-index-invalid",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"idxinvalid\", \"indexes\": [\"CREATE INDEX\"]}"
+    },
+    {
+      "name": "create-index-dup-name",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"idxdupname\", \"indexes\": [\"CREATE INDEX idx_a ON t (x)\", \"CREATE INDEX IDX_A ON t (y)\"]}"
+    },
+    {
+      "name": "create-index-existing-name",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"idxexisting\", \"indexes\": [\"CREATE UNIQUE INDEX `idx_mfas_collectionRef_recordRef` ON t (x)\"]}"
+    },
+    {
+      "name": "create-index-dup-definition",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"idxdupdef\", \"indexes\": [\"CREATE INDEX i1 ON t (x)\", \"CREATE INDEX i2 ON t (x)\"]}"
+    },
+    {
+      "name": "create-index-unknown-column",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"idxunknowncol\", \"indexes\": [\"CREATE UNIQUE INDEX idx_nope ON idxunknowncol (nope)\"]}"
+    },
+    {
+      "name": "create-auth-bad-token",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"auth\", \"name\": \"badtoken\", \"authToken\": {\"secret\": \"short\", \"duration\": 5}}"
+    },
+    {
+      "name": "create-auth-bad-alert",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"auth\", \"name\": \"badalert\", \"authAlert\": {\"emailTemplate\": {\"subject\": \"\"}}}"
+    },
+    {
+      "name": "create-auth-bad-identity",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"auth\", \"name\": \"badidentity\", \"passwordAuth\": {\"identityFields\": [\"username\"]}}"
+    },
+    {
+      "name": "create-auth-mfa-single",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"auth\", \"name\": \"mfasingle\", \"mfa\": {\"enabled\": true}}"
+    },
+    {
+      "name": "create-auth-options-null",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"auth\", \"name\": \"allnull\", \"authToken\": null, \"passwordAuth\": null, \"oauth2\": null, \"mfa\": null, \"otp\": null, \"authAlert\": null, \"verificationTemplate\": null}"
+    },
+    {
+      "name": "create-auth-token-partial",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"auth\", \"name\": \"tokpart\", \"authToken\": {\"duration\": 120}}",
+      "save": {
+        "tokpart_id": "id"
+      }
+    },
+    {
+      "name": "get-auth-token-partial",
+      "method": "GET",
+      "path": "/api/collections/tokpart",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "create-auth-token-secret-null",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"auth\", \"name\": \"toknull\", \"authToken\": {\"secret\": null, \"duration\": 120}}"
+    },
+    {
+      "name": "create-auth-alert-template-null",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"auth\", \"name\": \"alertnull\", \"authAlert\": {\"emailTemplate\": null}}"
+    },
+    {
+      "name": "create-oauth2-provider",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"auth\", \"name\": \"oauthone\", \"oauth2\": {\"enabled\": true, \"providers\": [{\"name\": \"github\", \"clientId\": \"cid\", \"clientSecret\": \"topsecret\", \"displayName\": \"GitHub\"}]}}",
+      "save": {
+        "oauthone_id": "id"
+      }
+    },
+    {
+      "name": "get-oauth2-provider",
+      "method": "GET",
+      "path": "/api/collections/oauthone",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "create-oauth2-dup-providers",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"auth\", \"name\": \"oauthdup\", \"oauth2\": {\"enabled\": true, \"providers\": [{\"name\": \"github\"}, {\"name\": \"github\"}]}}"
+    },
+    {
+      "name": "create-oauth2-mapped-null",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"auth\", \"name\": \"mappednull\", \"oauth2\": {\"mappedFields\": null, \"providers\": null}}",
+      "save": {
+        "mappednull_id": "id"
+      }
+    },
+    {
+      "name": "get-oauth2-mapped-null",
+      "method": "GET",
+      "path": "/api/collections/mappednull",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "create-auth-password-text",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"auth\", \"name\": \"pwdtext\", \"fields\": [{\"name\": \"password\", \"type\": \"text\"}]}"
+    },
+    {
+      "name": "create-fields-null-item",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"nullitem\", \"fields\": [null]}"
+    },
+    {
+      "name": "create-type-uppercase",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"BASE\", \"name\": \"uppertype\"}"
+    },
+    {
+      "name": "create-id-empty",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"emptyid\", \"id\": \"\"}"
+    },
+    {
+      "name": "create-name-uppercase",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"UPPER\"}"
+    },
+    {
+      "name": "create-name-null",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": null}"
+    },
+    {
+      "name": "delete-missing",
+      "method": "DELETE",
+      "path": "/api/collections/nope",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "delete-system",
+      "method": "DELETE",
+      "path": "/api/collections/_superusers",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "create-ref-target",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"ref_target\"}",
+      "save": {
+        "ref_target_id": "id"
+      }
+    },
+    {
+      "name": "create-ref-source",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"ref_source\", \"fields\": [{\"name\": \"r\", \"type\": \"relation\", \"collectionId\": \"{{ref_target_id}}\"}]}"
+    },
+    {
+      "name": "delete-referenced",
+      "method": "DELETE",
+      "path": "/api/collections/{{ref_target_id}}",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "delete-created",
+      "method": "DELETE",
+      "path": "/api/collections/{{members_id}}",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "get-deleted",
+      "method": "GET",
+      "path": "/api/collections/{{members_id}}",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "delete-again",
+      "method": "DELETE",
+      "path": "/api/collections/{{members_id}}",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "truncate-missing",
+      "method": "DELETE",
+      "path": "/api/collections/nope/truncate",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "truncate-superusers",
+      "method": "DELETE",
+      "path": "/api/collections/_superusers/truncate",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "truncate-posts",
+      "method": "DELETE",
+      "path": "/api/collections/posts/truncate",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "collections-after",
+      "method": "GET",
+      "path": "/api/collections?sort=name&perPage=200",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    }
+  ]
+}

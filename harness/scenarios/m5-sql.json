@@ -1,0 +1,200 @@
+{
+  "name": "m5-sql",
+  "requests": [
+    {
+      "name": "login",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-with-password",
+      "body": "{\"identity\": \"admin@example.com\", \"password\": \"pass12345678\"}",
+      "save": {
+        "token": "token"
+      }
+    },
+    {
+      "name": "create-user",
+      "method": "POST",
+      "path": "/api/collections/users/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"email\": \"sql@example.com\", \"password\": \"pass12345678\", \"passwordConfirm\": \"pass12345678\"}"
+    },
+    {
+      "name": "unauth",
+      "method": "POST",
+      "path": "/api/sql",
+      "body": "{\"query\": \"SELECT 1\"}"
+    },
+    {
+      "name": "login-user",
+      "method": "POST",
+      "path": "/api/collections/users/auth-with-password",
+      "body": "{\"identity\": \"sql@example.com\", \"password\": \"pass12345678\"}",
+      "save": {
+        "userToken": "token"
+      }
+    },
+    {
+      "name": "as-user-query",
+      "method": "POST",
+      "path": "/api/sql",
+      "headers": {
+        "authorization": "{{userToken}}"
+      },
+      "body": "{\"query\": \"SELECT 1\"}"
+    },
+    {
+      "name": "empty-query",
+      "method": "POST",
+      "path": "/api/sql",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{}"
+    },
+    {
+      "name": "whitespace-query",
+      "method": "POST",
+      "path": "/api/sql",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"query\": \"   \"}"
+    },
+    {
+      "name": "number-query",
+      "method": "POST",
+      "path": "/api/sql",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"query\": 1}"
+    },
+    {
+      "name": "select-expressions",
+      "method": "POST",
+      "path": "/api/sql",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"query\": \"SELECT 1 AS x, 'a' AS y, NULL AS z, 1.5 AS f, TRUE AS b\"}"
+    },
+    {
+      "name": "pragma-table-info",
+      "method": "POST",
+      "path": "/api/sql",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"query\": \"PRAGMA table_info(users)\"}"
+    },
+    {
+      "name": "bad-column",
+      "method": "POST",
+      "path": "/api/sql",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"query\": \"SELECT nope FROM users\"}"
+    },
+    {
+      "name": "syntax-error",
+      "method": "POST",
+      "path": "/api/sql",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"query\": \"SELEC 1\"}"
+    },
+    {
+      "name": "create-table",
+      "method": "POST",
+      "path": "/api/sql",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"query\": \"CREATE TABLE qtest (id TEXT PRIMARY KEY, n INTEGER, b BOOLEAN, r REAL)\"}"
+    },
+    {
+      "name": "insert-rows",
+      "method": "POST",
+      "path": "/api/sql",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"query\": \"INSERT INTO qtest (id,n,b,r) VALUES ('a', 1, 1, 1.5), ('b', NULL, 0, 2.0)\"}"
+    },
+    {
+      "name": "select-table",
+      "method": "POST",
+      "path": "/api/sql",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"query\": \"SELECT * FROM qtest ORDER BY id\"}"
+    },
+    {
+      "name": "update-row",
+      "method": "POST",
+      "path": "/api/sql",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"query\": \"UPDATE qtest SET n = 2 WHERE id = 'a'\"}"
+    },
+    {
+      "name": "update-none",
+      "method": "POST",
+      "path": "/api/sql",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"query\": \"UPDATE qtest SET n = 3 WHERE id = 'nope'\"}"
+    },
+    {
+      "name": "multi-select",
+      "method": "POST",
+      "path": "/api/sql",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"query\": \"SELECT 1; SELECT 2 AS two\"}"
+    },
+    {
+      "name": "multi-write",
+      "method": "POST",
+      "path": "/api/sql",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"query\": \"INSERT INTO qtest (id) VALUES ('c'); INSERT INTO qtest (id) VALUES ('d')\"}"
+    },
+    {
+      "name": "select-count",
+      "method": "POST",
+      "path": "/api/sql",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"query\": \"SELECT count(*) AS c FROM qtest\"}"
+    },
+    {
+      "name": "create-index",
+      "method": "POST",
+      "path": "/api/sql",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"query\": \"CREATE INDEX qtest_n ON qtest(n)\"}"
+    },
+    {
+      "name": "drop-table",
+      "method": "POST",
+      "path": "/api/sql",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"query\": \"DROP TABLE qtest\"}"
+    }
+  ]
+}

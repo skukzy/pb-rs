@@ -1,0 +1,230 @@
+{
+  "name": "m3b-filter-basic",
+  "requests": [
+    {
+      "name": "login",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-with-password",
+      "body": "{\"identity\": \"admin@example.com\", \"password\": \"pass12345678\"}",
+      "save": {
+        "token": "token"
+      }
+    },
+    {
+      "name": "create-collection",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"fposts\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}, {\"name\": \"count\", \"type\": \"number\"}, {\"name\": \"active\", \"type\": \"bool\"}]}"
+    },
+    {
+      "name": "r1",
+      "method": "POST",
+      "path": "/api/collections/fposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"title\": \"hello\", \"count\": 5, \"active\": true}"
+    },
+    {
+      "name": "r2",
+      "method": "POST",
+      "path": "/api/collections/fposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"title\": \"world\", \"count\": 10, \"active\": false}"
+    },
+    {
+      "name": "r3",
+      "method": "POST",
+      "path": "/api/collections/fposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"title\": \"hello world\", \"count\": 5, \"active\": true}"
+    },
+    {
+      "name": "f-eq",
+      "method": "GET",
+      "path": "/api/collections/fposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "count=5"
+      }
+    },
+    {
+      "name": "f-ne",
+      "method": "GET",
+      "path": "/api/collections/fposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "count!=5"
+      }
+    },
+    {
+      "name": "f-gt",
+      "method": "GET",
+      "path": "/api/collections/fposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "count>5"
+      }
+    },
+    {
+      "name": "f-gte",
+      "method": "GET",
+      "path": "/api/collections/fposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "count>=5"
+      }
+    },
+    {
+      "name": "f-lt",
+      "method": "GET",
+      "path": "/api/collections/fposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "count<10"
+      }
+    },
+    {
+      "name": "f-lte",
+      "method": "GET",
+      "path": "/api/collections/fposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "count<=5"
+      }
+    },
+    {
+      "name": "f-contains",
+      "method": "GET",
+      "path": "/api/collections/fposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "title~'ell'"
+      }
+    },
+    {
+      "name": "f-notcontains",
+      "method": "GET",
+      "path": "/api/collections/fposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "title!~'ell'"
+      }
+    },
+    {
+      "name": "f-and",
+      "method": "GET",
+      "path": "/api/collections/fposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "count=5 ",
+        " active": "true"
+      }
+    },
+    {
+      "name": "f-or",
+      "method": "GET",
+      "path": "/api/collections/fposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "count=5 || count=10"
+      }
+    },
+    {
+      "name": "f-paren",
+      "method": "GET",
+      "path": "/api/collections/fposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "(count=5 || count=10) ",
+        " active": "true"
+      }
+    },
+    {
+      "name": "f-null",
+      "method": "GET",
+      "path": "/api/collections/fposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "title=null"
+      }
+    },
+    {
+      "name": "f-bool",
+      "method": "GET",
+      "path": "/api/collections/fposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "active=true"
+      }
+    },
+    {
+      "name": "f-str",
+      "method": "GET",
+      "path": "/api/collections/fposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "title='hello'"
+      }
+    },
+    {
+      "name": "f-sort",
+      "method": "GET",
+      "path": "/api/collections/fposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "sort": "-count,title"
+      }
+    },
+    {
+      "name": "f-paged",
+      "method": "GET",
+      "path": "/api/collections/fposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "page": "1",
+        "perPage": "2",
+        "sort": "title"
+      }
+    }
+  ]
+}

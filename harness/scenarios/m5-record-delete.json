@@ -1,0 +1,738 @@
+{
+  "name": "m5-record-delete",
+  "requests": [
+    {
+      "name": "login",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-with-password",
+      "body": "{\"identity\": \"admin@example.com\", \"password\": \"pass12345678\"}",
+      "save": {
+        "token": "token",
+        "ownId": "record.id"
+      }
+    },
+    {
+      "name": "create-req_authors",
+      "method": "POST",
+      "path": "/api/collections",
+      "body": "{\"name\": \"req_authors\", \"type\": \"base\", \"listRule\": \"\", \"viewRule\": \"\", \"createRule\": \"\", \"updateRule\": \"\", \"deleteRule\": \"\", \"fields\": [{\"name\": \"name\", \"type\": \"text\"}]}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "reqAuthorsId": "id"
+      }
+    },
+    {
+      "name": "create-req_books",
+      "method": "POST",
+      "path": "/api/collections",
+      "body": "{\"name\": \"req_books\", \"type\": \"base\", \"listRule\": \"\", \"viewRule\": \"\", \"createRule\": \"\", \"updateRule\": \"\", \"deleteRule\": \"\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}, {\"name\": \"author\", \"type\": \"relation\", \"collectionId\": \"{{reqAuthorsId}}\", \"maxSelect\": 1, \"required\": true}]}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "reqBooksId": "id"
+      }
+    },
+    {
+      "name": "create-req_authors-reqA1",
+      "method": "POST",
+      "path": "/api/collections/req_authors/records",
+      "body": "{\"name\": \"A\"}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "reqA1": "id"
+      }
+    },
+    {
+      "name": "create-req_authors-reqA2",
+      "method": "POST",
+      "path": "/api/collections/req_authors/records",
+      "body": "{\"name\": \"B\"}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "reqA2": "id"
+      }
+    },
+    {
+      "name": "create-req_books-reqB1",
+      "method": "POST",
+      "path": "/api/collections/req_books/records",
+      "body": "{\"title\": \"b1\", \"author\": \"{{reqA1}}\"}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "reqB1": "id"
+      }
+    },
+    {
+      "name": "create-req_books-reqB2",
+      "method": "POST",
+      "path": "/api/collections/req_books/records",
+      "body": "{\"title\": \"b2\", \"author\": \"{{reqA1}}\"}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "reqB2": "id"
+      }
+    },
+    {
+      "name": "req-delete",
+      "method": "DELETE",
+      "path": "/api/collections/req_authors/records/{{reqA1}}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "probe": "del-req-delete"
+      }
+    },
+    {
+      "name": "req-after-delete",
+      "method": "GET",
+      "path": "/api/collections/req_books/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "perPage": "100",
+        "sort": "title"
+      }
+    },
+    {
+      "name": "req-truncate",
+      "method": "DELETE",
+      "path": "/api/collections/req_authors/truncate",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "probe": "del-req-truncate"
+      }
+    },
+    {
+      "name": "req-after-truncate",
+      "method": "GET",
+      "path": "/api/collections/req_authors/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "perPage": "100",
+        "sort": "name"
+      }
+    },
+    {
+      "name": "create-opt_authors",
+      "method": "POST",
+      "path": "/api/collections",
+      "body": "{\"name\": \"opt_authors\", \"type\": \"base\", \"listRule\": \"\", \"viewRule\": \"\", \"createRule\": \"\", \"updateRule\": \"\", \"deleteRule\": \"\", \"fields\": [{\"name\": \"name\", \"type\": \"text\"}]}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "optAuthorsId": "id"
+      }
+    },
+    {
+      "name": "create-opt_books",
+      "method": "POST",
+      "path": "/api/collections",
+      "body": "{\"name\": \"opt_books\", \"type\": \"base\", \"listRule\": \"\", \"viewRule\": \"\", \"createRule\": \"\", \"updateRule\": \"\", \"deleteRule\": \"\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}, {\"name\": \"author\", \"type\": \"relation\", \"collectionId\": \"{{optAuthorsId}}\", \"maxSelect\": 1, \"required\": false}]}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "optBooksId": "id"
+      }
+    },
+    {
+      "name": "create-opt_authors-optA1",
+      "method": "POST",
+      "path": "/api/collections/opt_authors/records",
+      "body": "{\"name\": \"A\"}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "optA1": "id"
+      }
+    },
+    {
+      "name": "create-opt_authors-optA2",
+      "method": "POST",
+      "path": "/api/collections/opt_authors/records",
+      "body": "{\"name\": \"B\"}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "optA2": "id"
+      }
+    },
+    {
+      "name": "create-opt_books-optB1",
+      "method": "POST",
+      "path": "/api/collections/opt_books/records",
+      "body": "{\"title\": \"ob1\", \"author\": \"{{optA1}}\"}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "optB1": "id"
+      }
+    },
+    {
+      "name": "create-opt_books-optB2",
+      "method": "POST",
+      "path": "/api/collections/opt_books/records",
+      "body": "{\"title\": \"ob2\", \"author\": \"{{optA2}}\"}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "optB2": "id"
+      }
+    },
+    {
+      "name": "opt-delete",
+      "method": "DELETE",
+      "path": "/api/collections/opt_authors/records/{{optA1}}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "probe": "del-opt-delete"
+      }
+    },
+    {
+      "name": "opt-after-delete",
+      "method": "GET",
+      "path": "/api/collections/opt_books/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "perPage": "100",
+        "sort": "title"
+      }
+    },
+    {
+      "name": "create-mul_authors",
+      "method": "POST",
+      "path": "/api/collections",
+      "body": "{\"name\": \"mul_authors\", \"type\": \"base\", \"listRule\": \"\", \"viewRule\": \"\", \"createRule\": \"\", \"updateRule\": \"\", \"deleteRule\": \"\", \"fields\": [{\"name\": \"name\", \"type\": \"text\"}]}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "mulAuthorsId": "id"
+      }
+    },
+    {
+      "name": "create-mul_books",
+      "method": "POST",
+      "path": "/api/collections",
+      "body": "{\"name\": \"mul_books\", \"type\": \"base\", \"listRule\": \"\", \"viewRule\": \"\", \"createRule\": \"\", \"updateRule\": \"\", \"deleteRule\": \"\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}, {\"name\": \"authors\", \"type\": \"relation\", \"collectionId\": \"{{mulAuthorsId}}\", \"maxSelect\": 3, \"required\": false}]}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "mulBooksId": "id"
+      }
+    },
+    {
+      "name": "create-mul_authors-mulA1",
+      "method": "POST",
+      "path": "/api/collections/mul_authors/records",
+      "body": "{\"name\": \"A\"}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "mulA1": "id"
+      }
+    },
+    {
+      "name": "create-mul_authors-mulA2",
+      "method": "POST",
+      "path": "/api/collections/mul_authors/records",
+      "body": "{\"name\": \"B\"}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "mulA2": "id"
+      }
+    },
+    {
+      "name": "create-mul_books-mulB1",
+      "method": "POST",
+      "path": "/api/collections/mul_books/records",
+      "body": "{\"title\": \"mb1\", \"authors\": [\"{{mulA1}}\", \"{{mulA2}}\"]}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "mulB1": "id"
+      }
+    },
+    {
+      "name": "mul-delete",
+      "method": "DELETE",
+      "path": "/api/collections/mul_authors/records/{{mulA1}}",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "mul-after-delete",
+      "method": "GET",
+      "path": "/api/collections/mul_books/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "perPage": "100",
+        "sort": "title"
+      }
+    },
+    {
+      "name": "create-cas_authors",
+      "method": "POST",
+      "path": "/api/collections",
+      "body": "{\"name\": \"cas_authors\", \"type\": \"base\", \"listRule\": \"\", \"viewRule\": \"\", \"createRule\": \"\", \"updateRule\": \"\", \"deleteRule\": \"\", \"fields\": [{\"name\": \"name\", \"type\": \"text\"}]}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "casAuthorsId": "id"
+      }
+    },
+    {
+      "name": "create-cas_books",
+      "method": "POST",
+      "path": "/api/collections",
+      "body": "{\"name\": \"cas_books\", \"type\": \"base\", \"listRule\": \"\", \"viewRule\": \"\", \"createRule\": \"\", \"updateRule\": \"\", \"deleteRule\": \"\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}, {\"name\": \"author\", \"type\": \"relation\", \"collectionId\": \"{{casAuthorsId}}\", \"maxSelect\": 1, \"required\": false, \"cascadeDelete\": true}]}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "casBooksId": "id"
+      }
+    },
+    {
+      "name": "create-cas_authors-casA1",
+      "method": "POST",
+      "path": "/api/collections/cas_authors/records",
+      "body": "{\"name\": \"A\"}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "casA1": "id"
+      }
+    },
+    {
+      "name": "create-cas_authors-casA2",
+      "method": "POST",
+      "path": "/api/collections/cas_authors/records",
+      "body": "{\"name\": \"B\"}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "casA2": "id"
+      }
+    },
+    {
+      "name": "create-cas_books-casB1",
+      "method": "POST",
+      "path": "/api/collections/cas_books/records",
+      "body": "{\"title\": \"cb1\", \"author\": \"{{casA1}}\"}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "casB1": "id"
+      }
+    },
+    {
+      "name": "create-cas_books-casB2",
+      "method": "POST",
+      "path": "/api/collections/cas_books/records",
+      "body": "{\"title\": \"cb2\", \"author\": \"{{casA2}}\"}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "casB2": "id"
+      }
+    },
+    {
+      "name": "cas-delete",
+      "method": "DELETE",
+      "path": "/api/collections/cas_authors/records/{{casA1}}",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "cas-after-delete",
+      "method": "GET",
+      "path": "/api/collections/cas_books/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "perPage": "100",
+        "sort": "title"
+      }
+    },
+    {
+      "name": "cas-truncate",
+      "method": "DELETE",
+      "path": "/api/collections/cas_authors/truncate",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "cas-after-truncate",
+      "method": "GET",
+      "path": "/api/collections/cas_books/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "perPage": "100",
+        "sort": "title"
+      }
+    },
+    {
+      "name": "create-mulreq_authors",
+      "method": "POST",
+      "path": "/api/collections",
+      "body": "{\"name\": \"mulreq_authors\", \"type\": \"base\", \"listRule\": \"\", \"viewRule\": \"\", \"createRule\": \"\", \"updateRule\": \"\", \"deleteRule\": \"\", \"fields\": [{\"name\": \"name\", \"type\": \"text\"}]}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "mulreqAuthorsId": "id"
+      }
+    },
+    {
+      "name": "create-mulreq_books",
+      "method": "POST",
+      "path": "/api/collections",
+      "body": "{\"name\": \"mulreq_books\", \"type\": \"base\", \"listRule\": \"\", \"viewRule\": \"\", \"createRule\": \"\", \"updateRule\": \"\", \"deleteRule\": \"\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}, {\"name\": \"authors\", \"type\": \"relation\", \"collectionId\": \"{{mulreqAuthorsId}}\", \"maxSelect\": 3, \"required\": true}]}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "mulreqBooksId": "id"
+      }
+    },
+    {
+      "name": "create-mulreq_authors-mulreqA1",
+      "method": "POST",
+      "path": "/api/collections/mulreq_authors/records",
+      "body": "{\"name\": \"A\"}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "mulreqA1": "id"
+      }
+    },
+    {
+      "name": "create-mulreq_authors-mulreqA2",
+      "method": "POST",
+      "path": "/api/collections/mulreq_authors/records",
+      "body": "{\"name\": \"B\"}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "mulreqA2": "id"
+      }
+    },
+    {
+      "name": "create-mulreq_books-mulreqB1",
+      "method": "POST",
+      "path": "/api/collections/mulreq_books/records",
+      "body": "{\"title\": \"eb1\", \"authors\": [\"{{mulreqA1}}\", \"{{mulreqA2}}\"]}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "mulreqB1": "id"
+      }
+    },
+    {
+      "name": "mulreq-delete",
+      "method": "DELETE",
+      "path": "/api/collections/mulreq_authors/records/{{mulreqA1}}",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "mulreq-after-delete",
+      "method": "GET",
+      "path": "/api/collections/mulreq_books/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "perPage": "100",
+        "sort": "title"
+      }
+    },
+    {
+      "name": "create-tree",
+      "method": "POST",
+      "path": "/api/collections",
+      "body": "{\"name\": \"tree\", \"type\": \"base\", \"listRule\": \"\", \"viewRule\": \"\", \"createRule\": \"\", \"updateRule\": \"\", \"deleteRule\": \"\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}]}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "treeId": "id"
+      }
+    },
+    {
+      "name": "patch-tree-fields",
+      "method": "PATCH",
+      "path": "/api/collections/tree",
+      "body": "{\"fields\": [{\"name\": \"title\", \"type\": \"text\"}, {\"name\": \"parent\", \"type\": \"relation\", \"collectionId\": \"{{treeId}}\", \"maxSelect\": 1, \"required\": false}]}",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "create-tree-treeRoot",
+      "method": "POST",
+      "path": "/api/collections/tree/records",
+      "body": "{\"title\": \"root\"}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "treeRoot": "id"
+      }
+    },
+    {
+      "name": "create-tree-treeChild",
+      "method": "POST",
+      "path": "/api/collections/tree/records",
+      "body": "{\"title\": \"child\", \"parent\": \"{{treeRoot}}\"}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "treeChild": "id"
+      }
+    },
+    {
+      "name": "tree-delete",
+      "method": "DELETE",
+      "path": "/api/collections/tree/records/{{treeRoot}}",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "tree-after-delete",
+      "method": "GET",
+      "path": "/api/collections/tree/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "perPage": "100",
+        "sort": "title"
+      }
+    },
+    {
+      "name": "create-ctree",
+      "method": "POST",
+      "path": "/api/collections",
+      "body": "{\"name\": \"ctree\", \"type\": \"base\", \"listRule\": \"\", \"viewRule\": \"\", \"createRule\": \"\", \"updateRule\": \"\", \"deleteRule\": \"\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}]}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "ctreeId": "id"
+      }
+    },
+    {
+      "name": "patch-ctree-fields",
+      "method": "PATCH",
+      "path": "/api/collections/ctree",
+      "body": "{\"fields\": [{\"name\": \"title\", \"type\": \"text\"}, {\"name\": \"parent\", \"type\": \"relation\", \"collectionId\": \"{{ctreeId}}\", \"maxSelect\": 1, \"required\": false, \"cascadeDelete\": true}]}",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "create-ctree-ctreeRoot",
+      "method": "POST",
+      "path": "/api/collections/ctree/records",
+      "body": "{\"title\": \"root\"}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "ctreeRoot": "id"
+      }
+    },
+    {
+      "name": "create-ctree-ctreeChild",
+      "method": "POST",
+      "path": "/api/collections/ctree/records",
+      "body": "{\"title\": \"child\", \"parent\": \"{{ctreeRoot}}\"}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "ctreeChild": "id"
+      }
+    },
+    {
+      "name": "create-ctree-ctreeGrand",
+      "method": "POST",
+      "path": "/api/collections/ctree/records",
+      "body": "{\"title\": \"grandchild\", \"parent\": \"{{ctreeChild}}\"}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "ctreeGrand": "id"
+      }
+    },
+    {
+      "name": "ctree-delete",
+      "method": "DELETE",
+      "path": "/api/collections/ctree/records/{{ctreeRoot}}",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "ctree-after-delete",
+      "method": "GET",
+      "path": "/api/collections/ctree/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "perPage": "100",
+        "sort": "title"
+      }
+    },
+    {
+      "name": "super-last-delete",
+      "method": "DELETE",
+      "path": "/api/collections/_superusers/records/{{ownId}}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "probe": "del-super-last"
+      }
+    },
+    {
+      "name": "create-super-second",
+      "method": "POST",
+      "path": "/api/collections/_superusers/records",
+      "body": "{\"email\": \"second@example.com\", \"password\": \"pass12345678\", \"passwordConfirm\": \"pass12345678\"}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "secondId": "id"
+      }
+    },
+    {
+      "name": "super-second-delete",
+      "method": "DELETE",
+      "path": "/api/collections/_superusers/records/{{secondId}}",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "super-last-delete-2",
+      "method": "DELETE",
+      "path": "/api/collections/_superusers/records/{{ownId}}",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "flush-logs",
+      "method": "GET",
+      "path": "/api/health",
+      "query": {
+        "probe": "del-flush"
+      },
+      "delayMs": 4200
+    },
+    {
+      "name": "log-del-req-delete",
+      "method": "GET",
+      "path": "/api/logs",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "data.url~\"del-req-delete\"",
+        "perPage": "1"
+      }
+    },
+    {
+      "name": "log-del-req-truncate",
+      "method": "GET",
+      "path": "/api/logs",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "data.url~\"del-req-truncate\"",
+        "perPage": "1"
+      }
+    },
+    {
+      "name": "log-del-opt-delete",
+      "method": "GET",
+      "path": "/api/logs",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "data.url~\"del-opt-delete\"",
+        "perPage": "1"
+      }
+    },
+    {
+      "name": "log-del-super-last",
+      "method": "GET",
+      "path": "/api/logs",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "data.url~\"del-super-last\"",
+        "perPage": "1"
+      }
+    }
+  ]
+}

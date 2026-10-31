@@ -1,0 +1,224 @@
+{
+  "name": "m4-auth",
+  "requests": [
+    {
+      "name": "login-superuser",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-with-password",
+      "body": "{\"identity\":\"admin@example.com\",\"password\":\"pass12345678\"}",
+      "save": {
+        "su": "token"
+      }
+    },
+    {
+      "name": "create-auth-collection",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{su}}"
+      },
+      "body": "{\"name\":\"authprobe\",\"type\":\"auth\",\"listRule\":\"\",\"viewRule\":\"\",\"createRule\":\"\",\"updateRule\":\"\",\"deleteRule\":\"\",\"fields\":[{\"name\":\"name\",\"type\":\"text\"}],\"passwordAuth\":{\"enabled\":true},\"otp\":{\"enabled\":true,\"duration\":180,\"length\":8},\"mfa\":{\"enabled\":true,\"duration\":1800,\"rule\":\"\"}}"
+    },
+    {
+      "name": "create-user",
+      "method": "POST",
+      "path": "/api/collections/authprobe/records",
+      "headers": {
+        "authorization": "{{su}}"
+      },
+      "body": "{\"email\":\"mfa@example.com\",\"password\":\"pass12345678\",\"passwordConfirm\":\"pass12345678\",\"name\":\"MFA User\",\"verified\":true}",
+      "save": {
+        "userId": "id"
+      }
+    },
+    {
+      "name": "login-bad-password",
+      "method": "POST",
+      "path": "/api/collections/authprobe/auth-with-password",
+      "body": "{\"identity\":\"mfa@example.com\",\"password\":\"wrong-password\"}"
+    },
+    {
+      "name": "mfa-challenge",
+      "method": "POST",
+      "path": "/api/collections/authprobe/auth-with-password",
+      "body": "{\"identity\":\"mfa@example.com\",\"password\":\"pass12345678\"}",
+      "save": {
+        "mfaId": "mfaId"
+      }
+    },
+    {
+      "name": "mfa-same-method",
+      "method": "POST",
+      "path": "/api/collections/authprobe/auth-with-password",
+      "body": "{\"identity\":\"mfa@example.com\",\"password\":\"pass12345678\",\"mfaId\":\"{{mfaId}}\"}"
+    },
+    {
+      "name": "mfa-bogus",
+      "method": "POST",
+      "path": "/api/collections/authprobe/auth-with-password",
+      "body": "{\"identity\":\"mfa@example.com\",\"password\":\"pass12345678\",\"mfaId\":\"nope\"}"
+    },
+    {
+      "name": "mfa-query",
+      "method": "POST",
+      "path": "/api/collections/authprobe/auth-with-password",
+      "query": {
+        "mfaId": "{{mfaId}}"
+      },
+      "body": "{\"identity\":\"mfa@example.com\",\"password\":\"pass12345678\"}"
+    },
+    {
+      "name": "disable-mfa",
+      "method": "PATCH",
+      "path": "/api/collections/authprobe",
+      "headers": {
+        "authorization": "{{su}}"
+      },
+      "body": "{\"mfa\":{\"enabled\":false,\"duration\":0,\"rule\":\"\"}}"
+    },
+    {
+      "name": "login-ok",
+      "method": "POST",
+      "path": "/api/collections/authprobe/auth-with-password",
+      "body": "{\"identity\":\"mfa@example.com\",\"password\":\"pass12345678\"}",
+      "save": {
+        "userToken": "token"
+      }
+    },
+    {
+      "name": "refresh",
+      "method": "POST",
+      "path": "/api/collections/authprobe/auth-refresh",
+      "headers": {
+        "authorization": "{{userToken}}"
+      }
+    },
+    {
+      "name": "refresh-bad",
+      "method": "POST",
+      "path": "/api/collections/authprobe/auth-refresh",
+      "headers": {
+        "authorization": "bad"
+      }
+    },
+    {
+      "name": "request-otp",
+      "method": "POST",
+      "path": "/api/collections/authprobe/request-otp",
+      "body": "{\"email\":\"mfa@example.com\"}"
+    },
+    {
+      "name": "request-otp-unknown",
+      "method": "POST",
+      "path": "/api/collections/authprobe/request-otp",
+      "body": "{\"email\":\"ghost@example.com\"}"
+    },
+    {
+      "name": "auth-with-otp-bogus",
+      "method": "POST",
+      "path": "/api/collections/authprobe/auth-with-otp",
+      "body": "{\"otpId\":\"nope\",\"password\":\"12345678\"}"
+    },
+    {
+      "name": "request-password-reset",
+      "method": "POST",
+      "path": "/api/collections/authprobe/request-password-reset",
+      "body": "{\"email\":\"mfa@example.com\"}"
+    },
+    {
+      "name": "request-password-reset-unknown",
+      "method": "POST",
+      "path": "/api/collections/authprobe/request-password-reset",
+      "body": "{\"email\":\"ghost@example.com\"}"
+    },
+    {
+      "name": "confirm-password-reset-bogus",
+      "method": "POST",
+      "path": "/api/collections/authprobe/confirm-password-reset",
+      "body": "{\"token\":\"nope\",\"password\":\"newpass12345\",\"passwordConfirm\":\"newpass12345\"}"
+    },
+    {
+      "name": "request-verification",
+      "method": "POST",
+      "path": "/api/collections/authprobe/request-verification",
+      "headers": {
+        "authorization": "{{userToken}}"
+      }
+    },
+    {
+      "name": "request-verification-unauth",
+      "method": "POST",
+      "path": "/api/collections/authprobe/request-verification"
+    },
+    {
+      "name": "confirm-verification-bogus",
+      "method": "POST",
+      "path": "/api/collections/authprobe/confirm-verification",
+      "body": "{\"token\":\"nope\"}"
+    },
+    {
+      "name": "request-email-change",
+      "method": "POST",
+      "path": "/api/collections/authprobe/request-email-change",
+      "headers": {
+        "authorization": "{{userToken}}"
+      },
+      "body": "{\"newEmail\":\"changed@example.com\"}"
+    },
+    {
+      "name": "request-email-change-unauth",
+      "method": "POST",
+      "path": "/api/collections/authprobe/request-email-change",
+      "body": "{\"newEmail\":\"changed@example.com\"}"
+    },
+    {
+      "name": "confirm-email-change-bogus",
+      "method": "POST",
+      "path": "/api/collections/authprobe/confirm-email-change",
+      "body": "{\"token\":\"nope\",\"password\":\"pass12345678\"}"
+    },
+    {
+      "name": "oauth2-bad-provider",
+      "method": "POST",
+      "path": "/api/collections/authprobe/auth-with-oauth2",
+      "body": "{\"provider\":\"nope\",\"code\":\"x\",\"codeVerifier\":\"y\",\"redirectUrl\":\"http://localhost/cb\"}"
+    },
+    {
+      "name": "auth-methods",
+      "method": "GET",
+      "path": "/api/collections/authprobe/auth-methods"
+    },
+    {
+      "name": "file-token-superuser",
+      "method": "POST",
+      "path": "/api/files/token",
+      "headers": {
+        "authorization": "{{su}}"
+      }
+    },
+    {
+      "name": "file-token-user",
+      "method": "POST",
+      "path": "/api/files/token",
+      "headers": {
+        "authorization": "{{userToken}}"
+      }
+    },
+    {
+      "name": "view-user",
+      "method": "GET",
+      "path": "/api/collections/authprobe/records/{{userId}}",
+      "headers": {
+        "authorization": "{{su}}"
+      }
+    },
+    {
+      "name": "list-users",
+      "method": "GET",
+      "path": "/api/collections/authprobe/records",
+      "headers": {
+        "authorization": "{{su}}"
+      }
+    }
+  ]
+}

@@ -1,0 +1,198 @@
+{
+  "name": "m6a-hooks",
+  "requests": [
+    {
+      "name": "login",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-with-password",
+      "body": "{\"identity\": \"admin@example.com\", \"password\": \"pass12345678\"}",
+      "save": {
+        "token": "token"
+      }
+    },
+    {
+      "name": "create-collection",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"hooktest\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}, {\"name\": \"note\", \"type\": \"text\"}]}"
+    },
+    {
+      "name": "create-ok",
+      "method": "POST",
+      "path": "/api/collections/hooktest/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"title\": \"ok\"}",
+      "save": {
+        "recordId": "id"
+      }
+    },
+    {
+      "name": "create-mutate",
+      "method": "POST",
+      "path": "/api/collections/hooktest/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"title\": \"mutate\"}"
+    },
+    {
+      "name": "create-keep",
+      "method": "POST",
+      "path": "/api/collections/hooktest/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"title\": \"keep\"}",
+      "save": {
+        "keepId": "id"
+      }
+    },
+    {
+      "name": "create-viewreject",
+      "method": "POST",
+      "path": "/api/collections/hooktest/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"title\": \"viewreject\"}",
+      "save": {
+        "viewRejectId": "id"
+      }
+    },
+    {
+      "name": "create-listreject",
+      "method": "POST",
+      "path": "/api/collections/hooktest/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"title\": \"listreject\"}"
+    },
+    {
+      "name": "create-reject",
+      "method": "POST",
+      "path": "/api/collections/hooktest/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"title\": \"reject\"}"
+    },
+    {
+      "name": "create-reject-data",
+      "method": "POST",
+      "path": "/api/collections/hooktest/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"title\": \"reject-data\"}"
+    },
+    {
+      "name": "create-plain-error",
+      "method": "POST",
+      "path": "/api/collections/hooktest/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"title\": \"plain-error\"}"
+    },
+    {
+      "name": "update-record",
+      "method": "PATCH",
+      "path": "/api/collections/hooktest/records/{{recordId}}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"note\": \"client\"}"
+    },
+    {
+      "name": "view-record",
+      "method": "GET",
+      "path": "/api/collections/hooktest/records/{{recordId}}",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "view-reject",
+      "method": "GET",
+      "path": "/api/collections/hooktest/records/{{viewRejectId}}",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "delete-keep",
+      "method": "DELETE",
+      "path": "/api/collections/hooktest/records/{{keepId}}",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "list-records",
+      "method": "GET",
+      "path": "/api/collections/hooktest/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "sort": "title",
+        "perPage": "100"
+      }
+    },
+    {
+      "name": "delete-record",
+      "method": "DELETE",
+      "path": "/api/collections/hooktest/records/{{recordId}}",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "list-after-delete",
+      "method": "GET",
+      "path": "/api/collections/hooktest/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "sort": "title",
+        "perPage": "100"
+      }
+    },
+    {
+      "name": "list-reject",
+      "method": "GET",
+      "path": "/api/collections/hooktest/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "title='listreject'"
+      }
+    },
+    {
+      "name": "create-error-collection",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"reqtest\", \"fields\": [{\"name\": \"req\", \"type\": \"text\", \"required\": true}]}"
+    },
+    {
+      "name": "create-error-record",
+      "method": "POST",
+      "path": "/api/collections/reqtest/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{}"
+    }
+  ]
+}

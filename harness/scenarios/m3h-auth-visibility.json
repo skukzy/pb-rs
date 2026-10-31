@@ -1,0 +1,336 @@
+{
+  "name": "m3h-auth-visibility",
+  "requests": [
+    {
+      "name": "login",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-with-password",
+      "body": "{\"identity\": \"admin@example.com\", \"password\": \"pass12345678\"}",
+      "save": { "token": "token" }
+    },
+    {
+      "name": "create-zusers",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"type\": \"auth\", \"name\": \"zusers\", \"fields\": [{\"name\": \"name\", \"type\": \"text\"}, {\"name\": \"secret\", \"type\": \"text\", \"hidden\": true}, {\"name\": \"role\", \"type\": \"text\"}], \"listRule\": \"\", \"viewRule\": \"\", \"createRule\": \"\", \"updateRule\": \"@request.auth.id = id\", \"deleteRule\": \"@request.auth.id = id\", \"manageRule\": \"@request.auth.role = 'admin'\"}",
+      "save": { "zusersId": "id" }
+    },
+    {
+      "name": "create-a",
+      "method": "POST",
+      "path": "/api/collections/zusers/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"email\": \"a@example.com\", \"password\": \"pass12345678\", \"passwordConfirm\": \"pass12345678\", \"name\": \"Alice\", \"secret\": \"s1\", \"role\": \"user\"}",
+      "save": { "idA": "id" }
+    },
+    {
+      "name": "create-b",
+      "method": "POST",
+      "path": "/api/collections/zusers/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"email\": \"b@example.com\", \"password\": \"pass12345678\", \"passwordConfirm\": \"pass12345678\", \"name\": \"Bob\", \"secret\": \"s2\", \"role\": \"user\"}",
+      "save": { "idB": "id" }
+    },
+    {
+      "name": "create-d",
+      "method": "POST",
+      "path": "/api/collections/zusers/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"email\": \"d@example.com\", \"password\": \"pass12345678\", \"passwordConfirm\": \"pass12345678\", \"name\": \"Dana\", \"secret\": \"s3\", \"role\": \"admin\"}",
+      "save": { "idD": "id" }
+    },
+    {
+      "name": "guest-list",
+      "method": "GET",
+      "path": "/api/collections/zusers/records",
+      "query": { "sort": "email" }
+    },
+    {
+      "name": "guest-view-a",
+      "method": "GET",
+      "path": "/api/collections/zusers/records/{{idA}}"
+    },
+    {
+      "name": "login-a",
+      "method": "POST",
+      "path": "/api/collections/zusers/auth-with-password",
+      "body": "{\"identity\": \"a@example.com\", \"password\": \"pass12345678\"}",
+      "save": { "atoken": "token", "arecord": "record" }
+    },
+    {
+      "name": "a-view-own",
+      "method": "GET",
+      "path": "/api/collections/zusers/records/{{idA}}",
+      "headers": { "authorization": "{{atoken}}" }
+    },
+    {
+      "name": "a-view-b",
+      "method": "GET",
+      "path": "/api/collections/zusers/records/{{idB}}",
+      "headers": { "authorization": "{{atoken}}" }
+    },
+    {
+      "name": "a-update-own-name",
+      "method": "PATCH",
+      "path": "/api/collections/zusers/records/{{idA}}",
+      "headers": { "authorization": "{{atoken}}" },
+      "body": "{\"name\": \"Alice2\"}"
+    },
+    {
+      "name": "a-update-b",
+      "method": "PATCH",
+      "path": "/api/collections/zusers/records/{{idB}}",
+      "headers": { "authorization": "{{atoken}}" },
+      "body": "{\"name\": \"Hacked\"}"
+    },
+    {
+      "name": "a-update-own-secret",
+      "method": "PATCH",
+      "path": "/api/collections/zusers/records/{{idA}}",
+      "headers": { "authorization": "{{atoken}}" },
+      "body": "{\"name\": \"Alice3\", \"secret\": \"hacked\"}"
+    },
+    {
+      "name": "su-view-a",
+      "method": "GET",
+      "path": "/api/collections/zusers/records/{{idA}}",
+      "headers": { "authorization": "{{token}}" }
+    },
+    {
+      "name": "a-update-verified",
+      "method": "PATCH",
+      "path": "/api/collections/zusers/records/{{idA}}",
+      "headers": { "authorization": "{{atoken}}" },
+      "body": "{\"verified\": true}"
+    },
+    {
+      "name": "a-update-email",
+      "method": "PATCH",
+      "path": "/api/collections/zusers/records/{{idA}}",
+      "headers": { "authorization": "{{atoken}}" },
+      "body": "{\"email\": \"other@example.com\"}"
+    },
+    {
+      "name": "a-update-password-short",
+      "method": "PATCH",
+      "path": "/api/collections/zusers/records/{{idA}}",
+      "headers": { "authorization": "{{atoken}}" },
+      "body": "{\"password\": \"short\", \"passwordConfirm\": \"short\"}"
+    },
+    {
+      "name": "a-update-password-mismatch",
+      "method": "PATCH",
+      "path": "/api/collections/zusers/records/{{idA}}",
+      "headers": { "authorization": "{{atoken}}" },
+      "body": "{\"password\": \"newpass12345\", \"passwordConfirm\": \"newpass12346\"}"
+    },
+    {
+      "name": "a-update-password-no-old",
+      "method": "PATCH",
+      "path": "/api/collections/zusers/records/{{idA}}",
+      "headers": { "authorization": "{{atoken}}" },
+      "body": "{\"password\": \"newpass12345\", \"passwordConfirm\": \"newpass12345\"}"
+    },
+    {
+      "name": "a-update-password-wrong-old",
+      "method": "PATCH",
+      "path": "/api/collections/zusers/records/{{idA}}",
+      "headers": { "authorization": "{{atoken}}" },
+      "body": "{\"password\": \"newpass12345\", \"passwordConfirm\": \"newpass12345\", \"oldPassword\": \"wrongpass123\"}"
+    },
+    {
+      "name": "a-update-password-ok",
+      "method": "PATCH",
+      "path": "/api/collections/zusers/records/{{idA}}",
+      "headers": { "authorization": "{{atoken}}" },
+      "body": "{\"password\": \"newpass12345\", \"passwordConfirm\": \"newpass12345\", \"oldPassword\": \"pass12345678\"}"
+    },
+    {
+      "name": "login-a-new-password",
+      "method": "POST",
+      "path": "/api/collections/zusers/auth-with-password",
+      "body": "{\"identity\": \"a@example.com\", \"password\": \"newpass12345\"}",
+      "save": { "atoken2": "token" }
+    },
+    {
+      "name": "login-a-old-password",
+      "method": "POST",
+      "path": "/api/collections/zusers/auth-with-password",
+      "body": "{\"identity\": \"a@example.com\", \"password\": \"pass12345678\"}"
+    },
+    {
+      "name": "su-set-email-visible",
+      "method": "PATCH",
+      "path": "/api/collections/zusers/records/{{idA}}",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"emailVisibility\": true}"
+    },
+    {
+      "name": "guest-view-a-visible",
+      "method": "GET",
+      "path": "/api/collections/zusers/records/{{idA}}"
+    },
+    {
+      "name": "login-d",
+      "method": "POST",
+      "path": "/api/collections/zusers/auth-with-password",
+      "body": "{\"identity\": \"d@example.com\", \"password\": \"pass12345678\"}",
+      "save": { "dtoken": "token" }
+    },
+    {
+      "name": "d-view-b-managed",
+      "method": "GET",
+      "path": "/api/collections/zusers/records/{{idB}}",
+      "headers": { "authorization": "{{dtoken}}" }
+    },
+    {
+      "name": "d-update-b-verified",
+      "method": "PATCH",
+      "path": "/api/collections/zusers/records/{{idB}}",
+      "headers": { "authorization": "{{dtoken}}" },
+      "body": "{\"verified\": true}"
+    },
+    {
+      "name": "d-update-b-email",
+      "method": "PATCH",
+      "path": "/api/collections/zusers/records/{{idB}}",
+      "headers": { "authorization": "{{dtoken}}" },
+      "body": "{\"email\": \"b2@example.com\"}"
+    },
+    {
+      "name": "su-view-b",
+      "method": "GET",
+      "path": "/api/collections/zusers/records/{{idB}}",
+      "headers": { "authorization": "{{token}}" }
+    },
+    {
+      "name": "guest-create-c",
+      "method": "POST",
+      "path": "/api/collections/zusers/records",
+      "body": "{\"email\": \"c@example.com\", \"password\": \"pass12345678\", \"passwordConfirm\": \"pass12345678\", \"name\": \"Carol\", \"role\": \"user\"}",
+      "save": { "idC": "id" }
+    },
+    {
+      "name": "guest-create-short-password",
+      "method": "POST",
+      "path": "/api/collections/zusers/records",
+      "body": "{\"email\": \"c2@example.com\", \"password\": \"short\", \"passwordConfirm\": \"short\"}"
+    },
+    {
+      "name": "guest-create-bad-email",
+      "method": "POST",
+      "path": "/api/collections/zusers/records",
+      "body": "{\"email\": \"bad\", \"password\": \"pass12345678\", \"passwordConfirm\": \"pass12345678\"}"
+    },
+    {
+      "name": "guest-create-mismatch",
+      "method": "POST",
+      "path": "/api/collections/zusers/records",
+      "body": "{\"email\": \"c3@example.com\", \"password\": \"pass12345678\", \"passwordConfirm\": \"pass12345679\"}"
+    },
+    {
+      "name": "guest-create-verified",
+      "method": "POST",
+      "path": "/api/collections/zusers/records",
+      "body": "{\"email\": \"c4@example.com\", \"password\": \"pass12345678\", \"passwordConfirm\": \"pass12345678\", \"verified\": true}"
+    },
+    {
+      "name": "a-delete-b",
+      "method": "DELETE",
+      "path": "/api/collections/zusers/records/{{idB}}",
+      "headers": { "authorization": "{{atoken2}}" }
+    },
+    {
+      "name": "create-zreq",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"type\": \"base\", \"name\": \"zreq\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}, {\"name\": \"flag\", \"type\": \"bool\"}], \"listRule\": \"\", \"viewRule\": \"\", \"createRule\": \"@request.body.title = 'ok'\", \"updateRule\": \"@request.body.title = 'ok'\"}"
+    },
+    {
+      "name": "guest-create-zreq-ok",
+      "method": "POST",
+      "path": "/api/collections/zreq/records",
+      "body": "{\"title\": \"ok\"}",
+      "save": { "qid": "id" }
+    },
+    {
+      "name": "guest-create-zreq-bad",
+      "method": "POST",
+      "path": "/api/collections/zreq/records",
+      "body": "{\"title\": \"bad\"}"
+    },
+    {
+      "name": "guest-create-zreq-missing",
+      "method": "POST",
+      "path": "/api/collections/zreq/records",
+      "body": "{\"flag\": true}"
+    },
+    {
+      "name": "guest-update-zreq-ok",
+      "method": "PATCH",
+      "path": "/api/collections/zreq/records/{{qid}}",
+      "body": "{\"title\": \"changed\"}"
+    },
+    {
+      "name": "guest-update-zreq-missing-title",
+      "method": "PATCH",
+      "path": "/api/collections/zreq/records/{{qid}}",
+      "body": "{\"flag\": true}"
+    },
+    {
+      "name": "guest-update-zreq-bad",
+      "method": "PATCH",
+      "path": "/api/collections/zreq/records/{{qid}}",
+      "body": "{\"title\": \"bad\"}"
+    },
+    {
+      "name": "guest-update-zreq-ok2",
+      "method": "PATCH",
+      "path": "/api/collections/zreq/records/{{qid}}",
+      "body": "{\"title\": \"ok\"}"
+    },
+    {
+      "name": "create-zhead",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"type\": \"base\", \"name\": \"zhead\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}], \"createRule\": \"@request.headers.x_token = 'yes'\"}"
+    },
+    {
+      "name": "guest-create-zhead-ok",
+      "method": "POST",
+      "path": "/api/collections/zhead/records",
+      "headers": { "x-token": "yes" },
+      "body": "{\"title\": \"h\"}"
+    },
+    {
+      "name": "guest-create-zhead-missing",
+      "method": "POST",
+      "path": "/api/collections/zhead/records",
+      "body": "{\"title\": \"h\"}"
+    },
+    {
+      "name": "create-zquery",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"type\": \"base\", \"name\": \"zquery\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}], \"createRule\": \"@request.query.token = 'q1'\"}"
+    },
+    {
+      "name": "guest-create-zquery-ok",
+      "method": "POST",
+      "path": "/api/collections/zquery/records",
+      "query": { "token": "q1" },
+      "body": "{\"title\": \"q\"}"
+    },
+    {
+      "name": "guest-create-zquery-bad",
+      "method": "POST",
+      "path": "/api/collections/zquery/records",
+      "query": { "token": "q2" },
+      "body": "{\"title\": \"q\"}"
+    }
+  ]
+}

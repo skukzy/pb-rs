@@ -1,0 +1,112 @@
+{
+  "name": "m5-batch",
+  "requests": [
+    {
+      "name": "login",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-with-password",
+      "body": "{\"identity\": \"admin@example.com\", \"password\": \"pass12345678\"}",
+      "save": {
+        "token": "token"
+      }
+    },
+    {
+      "name": "enable-batch",
+      "method": "PATCH",
+      "path": "/api/settings",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"batch\": {\"enabled\": true, \"maxRequests\": 50, \"timeout\": 3}}"
+    },
+    {
+      "name": "create-collection",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"name\": \"batchprobe\", \"type\": \"base\", \"listRule\": \"\", \"viewRule\": \"\", \"createRule\": \"\", \"updateRule\": \"\", \"deleteRule\": \"\", \"fields\": [{\"name\": \"title\", \"type\": \"text\", \"required\": true}]}"
+    },
+    {
+      "name": "success",
+      "method": "POST",
+      "path": "/api/batch",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"requests\": [{\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"batch1\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"batch2\"}}, {\"method\": \"PUT\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"batch3\"}}]}",
+      "save": {
+        "id0": "0.body.id",
+        "id1": "1.body.id"
+      }
+    },
+    {
+      "name": "failure-rollback",
+      "method": "POST",
+      "path": "/api/batch",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"requests\": [{\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"rollback1\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"rollback2\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"\"}}]}"
+    },
+    {
+      "name": "rollback-count",
+      "method": "GET",
+      "path": "/api/collections/batchprobe/records",
+      "query": {
+        "filter": "title~'rollback'"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "unknown-action",
+      "method": "POST",
+      "path": "/api/batch",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"requests\": [{\"method\": \"GET\", \"url\": \"/api/health\"}]}"
+    },
+    {
+      "name": "per-request-validation",
+      "method": "POST",
+      "path": "/api/batch",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"requests\": [{}, {\"method\": \"GET\", \"url\": \"/valid\"}, {\"method\": \"invalid\", \"url\": \"/valid\"}, {\"method\": \"POST\", \"url\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}]}"
+    },
+    {
+      "name": "too-many",
+      "method": "POST",
+      "path": "/api/batch",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"requests\": [{\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x0\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x1\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x2\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x3\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x4\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x5\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x6\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x7\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x8\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x9\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x10\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x11\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x12\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x13\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x14\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x15\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x16\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x17\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x18\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x19\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x20\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x21\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x22\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x23\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x24\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x25\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x26\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x27\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x28\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x29\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x30\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x31\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x32\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x33\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x34\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x35\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x36\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x37\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x38\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x39\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x40\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x41\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x42\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x43\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x44\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x45\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x46\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x47\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x48\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x49\"}}, {\"method\": \"POST\", \"url\": \"/api/collections/batchprobe/records\", \"body\": {\"title\": \"x50\"}}]}"
+    },
+    {
+      "name": "delete",
+      "method": "POST",
+      "path": "/api/batch",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"requests\": [{\"method\": \"DELETE\", \"url\": \"/api/collections/batchprobe/records/{{id0}}\"}]}"
+    },
+    {
+      "name": "list-after",
+      "method": "GET",
+      "path": "/api/collections/batchprobe/records",
+      "query": {
+        "sort": "title"
+      },
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    }
+  ]
+}

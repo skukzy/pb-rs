@@ -1,0 +1,201 @@
+{
+  "name": "m3d-rules",
+  "requests": [
+    {
+      "name": "login-superuser",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-with-password",
+      "body": "{\"identity\": \"admin@example.com\", \"password\": \"pass12345678\"}",
+      "save": {
+        "token": "token"
+      }
+    },
+    {
+      "name": "create-members",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"auth\", \"name\": \"members\", \"fields\": [{\"name\": \"name\", \"type\": \"text\"}]}",
+      "save": {
+        "membersId": "id"
+      }
+    },
+    {
+      "name": "create-articles",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"articles\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}, {\"name\": \"owner\", \"type\": \"relation\", \"collectionId\": \"{{membersId}}\", \"maxSelect\": 1}], \"listRule\": \"owner = @request.auth.id\", \"viewRule\": \"owner = @request.auth.id\", \"createRule\": \"@request.auth.id != ''\", \"updateRule\": \"owner = @request.auth.id\", \"deleteRule\": \"owner = @request.auth.id\"}"
+    },
+    {
+      "name": "create-alice",
+      "method": "POST",
+      "path": "/api/collections/members/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"email\": \"alice@example.com\", \"password\": \"alicepass123\", \"passwordConfirm\": \"alicepass123\", \"name\": \"Alice\"}",
+      "save": {
+        "aliceId": "id"
+      }
+    },
+    {
+      "name": "create-bob",
+      "method": "POST",
+      "path": "/api/collections/members/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"email\": \"bob@example.com\", \"password\": \"bobpass1234\", \"passwordConfirm\": \"bobpass1234\", \"name\": \"Bob\"}",
+      "save": {
+        "bobId": "id"
+      }
+    },
+    {
+      "name": "create-missing-password",
+      "method": "POST",
+      "path": "/api/collections/members/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"email\": \"nopass@example.com\", \"name\": \"NoPass\"}"
+    },
+    {
+      "name": "create-short-password",
+      "method": "POST",
+      "path": "/api/collections/members/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"email\": \"short@example.com\", \"password\": \"short\", \"passwordConfirm\": \"short\", \"name\": \"Short\"}"
+    },
+    {
+      "name": "login-alice",
+      "method": "POST",
+      "path": "/api/collections/members/auth-with-password",
+      "body": "{\"identity\": \"alice@example.com\", \"password\": \"alicepass123\"}",
+      "save": {
+        "atoken": "token"
+      }
+    },
+    {
+      "name": "login-bob",
+      "method": "POST",
+      "path": "/api/collections/members/auth-with-password",
+      "body": "{\"identity\": \"bob@example.com\", \"password\": \"bobpass1234\"}",
+      "save": {
+        "btoken": "token"
+      }
+    },
+    {
+      "name": "alice-create-article",
+      "method": "POST",
+      "path": "/api/collections/articles/records",
+      "headers": {
+        "authorization": "{{atoken}}"
+      },
+      "body": "{\"title\": \"alice post\", \"owner\": \"{{aliceId}}\"}",
+      "save": {
+        "a1": "id"
+      }
+    },
+    {
+      "name": "bob-create-article",
+      "method": "POST",
+      "path": "/api/collections/articles/records",
+      "headers": {
+        "authorization": "{{btoken}}"
+      },
+      "body": "{\"title\": \"bob post\", \"owner\": \"{{bobId}}\"}",
+      "save": {
+        "a2": "id"
+      }
+    },
+    {
+      "name": "alice-list",
+      "method": "GET",
+      "path": "/api/collections/articles/records",
+      "headers": {
+        "authorization": "{{atoken}}"
+      }
+    },
+    {
+      "name": "alice-view-bob",
+      "method": "GET",
+      "path": "/api/collections/articles/records/{{a2}}",
+      "headers": {
+        "authorization": "{{atoken}}"
+      }
+    },
+    {
+      "name": "alice-update-bob",
+      "method": "PATCH",
+      "path": "/api/collections/articles/records/{{a2}}",
+      "headers": {
+        "authorization": "{{atoken}}"
+      },
+      "body": "{\"title\": \"hacked\"}"
+    },
+    {
+      "name": "alice-delete-bob",
+      "method": "DELETE",
+      "path": "/api/collections/articles/records/{{a2}}",
+      "headers": {
+        "authorization": "{{atoken}}"
+      }
+    },
+    {
+      "name": "guest-list-articles",
+      "method": "GET",
+      "path": "/api/collections/articles/records"
+    },
+    {
+      "name": "guest-view-article",
+      "method": "GET",
+      "path": "/api/collections/articles/records/{{a1}}"
+    },
+    {
+      "name": "alice-update-own",
+      "method": "PATCH",
+      "path": "/api/collections/articles/records/{{a1}}",
+      "headers": {
+        "authorization": "{{atoken}}"
+      },
+      "body": "{\"title\": \"alice edited\"}"
+    },
+    {
+      "name": "alice-delete-own",
+      "method": "DELETE",
+      "path": "/api/collections/articles/records/{{a1}}",
+      "headers": {
+        "authorization": "{{atoken}}"
+      }
+    },
+    {
+      "name": "create-secret",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"secret\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}]}"
+    },
+    {
+      "name": "guest-list-secret",
+      "method": "GET",
+      "path": "/api/collections/secret/records"
+    },
+    {
+      "name": "alice-list-secret",
+      "method": "GET",
+      "path": "/api/collections/secret/records",
+      "headers": {
+        "authorization": "{{atoken}}"
+      }
+    }
+  ]
+}

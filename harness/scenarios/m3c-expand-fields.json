@@ -1,0 +1,350 @@
+{
+  "name": "m3c-expand-fields",
+  "requests": [
+    {
+      "name": "login",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-with-password",
+      "body": "{\"identity\": \"admin@example.com\", \"password\": \"pass12345678\"}",
+      "save": {
+        "token": "token"
+      }
+    },
+    {
+      "name": "create-authors",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"authors\", \"fields\": [{\"name\": \"name\", \"type\": \"text\"}]}",
+      "save": {
+        "authorsId": "id"
+      }
+    },
+    {
+      "name": "patch-authors-mentor",
+      "method": "PATCH",
+      "path": "/api/collections/authors",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"fields\": [{\"name\": \"name\", \"type\": \"text\"}, {\"name\": \"mentor\", \"type\": \"relation\", \"collectionId\": \"{{authorsId}}\", \"maxSelect\": 1}]}"
+    },
+    {
+      "name": "create-tags",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"tags\", \"fields\": [{\"name\": \"name\", \"type\": \"text\"}]}",
+      "save": {
+        "tagsId": "id"
+      }
+    },
+    {
+      "name": "create-posts",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"eposts\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}, {\"name\": \"author\", \"type\": \"relation\", \"collectionId\": \"{{authorsId}}\", \"maxSelect\": 1}, {\"name\": \"tags\", \"type\": \"relation\", \"collectionId\": \"{{tagsId}}\", \"maxSelect\": 10}, {\"name\": \"views\", \"type\": \"number\"}]}"
+    },
+    {
+      "name": "author-alice",
+      "method": "POST",
+      "path": "/api/collections/authors/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"name\": \"alice\"}",
+      "save": {
+        "aliceId": "id"
+      }
+    },
+    {
+      "name": "author-bob",
+      "method": "POST",
+      "path": "/api/collections/authors/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"name\": \"bob\", \"mentor\": \"{{aliceId}}\"}",
+      "save": {
+        "bobId": "id"
+      }
+    },
+    {
+      "name": "tag-rust",
+      "method": "POST",
+      "path": "/api/collections/tags/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"name\": \"rust\"}",
+      "save": {
+        "rustId": "id"
+      }
+    },
+    {
+      "name": "tag-sqlite",
+      "method": "POST",
+      "path": "/api/collections/tags/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"name\": \"sqlite\"}",
+      "save": {
+        "sqliteId": "id"
+      }
+    },
+    {
+      "name": "post-first",
+      "method": "POST",
+      "path": "/api/collections/eposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"title\": \"first\", \"author\": \"{{bobId}}\", \"tags\": [\"{{rustId}}\", \"{{sqliteId}}\"], \"views\": 3}",
+      "save": {
+        "firstId": "id"
+      }
+    },
+    {
+      "name": "post-second",
+      "method": "POST",
+      "path": "/api/collections/eposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"title\": \"second\", \"author\": \"{{aliceId}}\", \"tags\": [\"{{rustId}}\"], \"views\": 7}"
+    },
+    {
+      "name": "post-third",
+      "method": "POST",
+      "path": "/api/collections/eposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"title\": \"third\", \"views\": 1}"
+    },
+    {
+      "name": "list-expand-author",
+      "method": "GET",
+      "path": "/api/collections/eposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "sort": "title",
+        "expand": "author"
+      }
+    },
+    {
+      "name": "list-expand-nested",
+      "method": "GET",
+      "path": "/api/collections/eposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "sort": "title",
+        "expand": "author.mentor"
+      }
+    },
+    {
+      "name": "list-expand-multi",
+      "method": "GET",
+      "path": "/api/collections/eposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "sort": "title",
+        "expand": "author,tags"
+      }
+    },
+    {
+      "name": "list-filter-relation",
+      "method": "GET",
+      "path": "/api/collections/eposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "author.name='alice'",
+        "expand": "author"
+      }
+    },
+    {
+      "name": "list-filter-multi-relation",
+      "method": "GET",
+      "path": "/api/collections/eposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "tags.name='rust'",
+        "sort": "title"
+      }
+    },
+    {
+      "name": "get-expand",
+      "method": "GET",
+      "path": "/api/collections/eposts/records/{{firstId}}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "expand": "author,tags"
+      }
+    },
+    {
+      "name": "list-fields",
+      "method": "GET",
+      "path": "/api/collections/eposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "sort": "title",
+        "fields": "title,views"
+      }
+    },
+    {
+      "name": "list-fields-expand",
+      "method": "GET",
+      "path": "/api/collections/eposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "sort": "title",
+        "fields": "title,author",
+        "expand": "author"
+      }
+    },
+    {
+      "name": "list-sort-desc",
+      "method": "GET",
+      "path": "/api/collections/eposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "sort": "-views"
+      }
+    },
+    {
+      "name": "list-page2",
+      "method": "GET",
+      "path": "/api/collections/eposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "page": "2",
+        "perPage": "1",
+        "sort": "title"
+      }
+    },
+    {
+      "name": "list-filter-multi-any",
+      "method": "GET",
+      "path": "/api/collections/eposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "tags.name?='rust'",
+        "sort": "title"
+      }
+    },
+    {
+      "name": "list-filter-multi-ne",
+      "method": "GET",
+      "path": "/api/collections/eposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "tags.name!='rust'",
+        "sort": "title"
+      }
+    },
+    {
+      "name": "list-filter-multi-anyne",
+      "method": "GET",
+      "path": "/api/collections/eposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "tags.name?!='rust'",
+        "sort": "title"
+      }
+    },
+    {
+      "name": "list-filter-multi-like",
+      "method": "GET",
+      "path": "/api/collections/eposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "tags.name~'ru'",
+        "sort": "title"
+      }
+    },
+    {
+      "name": "list-filter-multi-anylike",
+      "method": "GET",
+      "path": "/api/collections/eposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "tags.name?~'ru'",
+        "sort": "title"
+      }
+    },
+    {
+      "name": "list-filter-multi-nlike",
+      "method": "GET",
+      "path": "/api/collections/eposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "tags.name!~'ru'",
+        "sort": "title"
+      }
+    },
+    {
+      "name": "list-filter-multi-anynlike",
+      "method": "GET",
+      "path": "/api/collections/eposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "tags.name?!~'ru'",
+        "sort": "title"
+      }
+    },
+    {
+      "name": "list-filter-single-ne",
+      "method": "GET",
+      "path": "/api/collections/eposts/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "author.name!='alice'",
+        "sort": "title"
+      }
+    }
+  ]
+}

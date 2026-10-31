@@ -1,0 +1,348 @@
+{
+  "name": "m3j-filter-errors",
+  "requests": [
+    {
+      "name": "login",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-with-password",
+      "body": "{\"identity\": \"admin@example.com\", \"password\": \"pass12345678\"}",
+      "save": {
+        "token": "token"
+      }
+    },
+    {
+      "name": "create-target",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"ferr_target\", \"fields\": [{\"name\": \"name\", \"type\": \"text\"}]}",
+      "save": {
+        "targetId": "id"
+      }
+    },
+    {
+      "name": "create-main",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"ferr\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}, {\"name\": \"count\", \"type\": \"number\"}, {\"name\": \"active\", \"type\": \"bool\"}, {\"name\": \"rel\", \"type\": \"relation\", \"collectionId\": \"{{targetId}}\"}]}"
+    },
+    {
+      "name": "record-1",
+      "method": "POST",
+      "path": "/api/collections/ferr/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"title\": \"hello\", \"count\": 1, \"active\": true}"
+    },
+    {
+      "name": "record-2",
+      "method": "POST",
+      "path": "/api/collections/ferr/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"title\": \"world\", \"count\": 2, \"active\": false}"
+    },
+    {
+      "name": "filter-lower",
+      "method": "GET",
+      "path": "/api/collections/ferr/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "title:lower = 'hello'"
+      }
+    },
+    {
+      "name": "filter-length",
+      "method": "GET",
+      "path": "/api/collections/ferr/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "title:length = 5"
+      }
+    },
+    {
+      "name": "filter-true-literal",
+      "method": "GET",
+      "path": "/api/collections/ferr/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "active = TRUE"
+      }
+    },
+    {
+      "name": "filter-false-literal",
+      "method": "GET",
+      "path": "/api/collections/ferr/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "active = false"
+      }
+    },
+    {
+      "name": "filter-any-eq",
+      "method": "GET",
+      "path": "/api/collections/ferr/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "title ?= 'hello'"
+      }
+    },
+    {
+      "name": "filter-bare",
+      "method": "GET",
+      "path": "/api/collections/ferr/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "title"
+      }
+    },
+    {
+      "name": "filter-unknown-field",
+      "method": "GET",
+      "path": "/api/collections/ferr/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "missing = 1"
+      }
+    },
+    {
+      "name": "filter-bad-sign",
+      "method": "GET",
+      "path": "/api/collections/ferr/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "title === 'x'"
+      }
+    },
+    {
+      "name": "filter-bad-relation",
+      "method": "GET",
+      "path": "/api/collections/ferr/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "rel.missing = 1"
+      }
+    },
+    {
+      "name": "filter-bad-collection",
+      "method": "GET",
+      "path": "/api/collections/ferr/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "@collection.nope.x = 1"
+      }
+    },
+    {
+      "name": "filter-unclosed-group",
+      "method": "GET",
+      "path": "/api/collections/ferr/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "(title = 'a'"
+      }
+    },
+    {
+      "name": "filter-bad-comment",
+      "method": "GET",
+      "path": "/api/collections/ferr/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "title = 1 /* x */"
+      }
+    },
+    {
+      "name": "filter-bad-number",
+      "method": "GET",
+      "path": "/api/collections/ferr/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "query": {
+        "filter": "title = -"
+      }
+    },
+    {
+      "name": "rule-incomplete",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"rule_bad_1\", \"listRule\": \"foo\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}]}"
+    },
+    {
+      "name": "rule-unknown-field",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"rule_bad_2\", \"listRule\": \"foo = 1\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}]}"
+    },
+    {
+      "name": "rule-relation-missing",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"rule_bad_3\", \"listRule\": \"rel.missing = 1\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}, {\"name\": \"rel\", \"type\": \"relation\", \"collectionId\": \"{{targetId}}\"}]}"
+    },
+    {
+      "name": "rule-collection-missing",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"rule_bad_4\", \"listRule\": \"@collection.nope.x = 1\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}]}"
+    },
+    {
+      "name": "rule-bad-modifier",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"rule_bad_5\", \"listRule\": \"title:foo = 'x'\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}]}"
+    },
+    {
+      "name": "rule-unknown-function",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"rule_bad_6\", \"listRule\": \"lower(title) = 'x'\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}]}"
+    },
+    {
+      "name": "rule-geo-args",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"rule_bad_7\", \"listRule\": \"geoDistance(1,2,3) < 1\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}]}"
+    },
+    {
+      "name": "rule-strftime-format",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"rule_bad_8\", \"listRule\": \"strftime(1) = 'x'\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}]}"
+    },
+    {
+      "name": "rule-valid-normalized",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"rule_ok_1\", \"listRule\": \"TRUE = 1\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}]}",
+      "save": {
+        "ruleOk1": "id"
+      }
+    },
+    {
+      "name": "rule-valid-lower",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"rule_ok_2\", \"listRule\": \"title:lower = 'x'\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}]}",
+      "save": {
+        "ruleOk2": "id"
+      }
+    },
+    {
+      "name": "rule-valid-request",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"rule_ok_3\", \"listRule\": \"@request.body.x = 1\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}]}",
+      "save": {
+        "ruleOk3": "id"
+      }
+    },
+    {
+      "name": "rule-valid-macro",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"type\": \"base\", \"name\": \"rule_ok_4\", \"listRule\": \"@now = 1\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}]}",
+      "save": {
+        "ruleOk4": "id"
+      }
+    },
+    {
+      "name": "delete-rule-ok-1",
+      "method": "DELETE",
+      "path": "/api/collections/{{ruleOk1}}",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "delete-rule-ok-2",
+      "method": "DELETE",
+      "path": "/api/collections/{{ruleOk2}}",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "delete-rule-ok-3",
+      "method": "DELETE",
+      "path": "/api/collections/{{ruleOk3}}",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "delete-rule-ok-4",
+      "method": "DELETE",
+      "path": "/api/collections/{{ruleOk4}}",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    }
+  ]
+}

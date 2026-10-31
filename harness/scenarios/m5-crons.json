@@ -1,0 +1,48 @@
+{
+  "name": "m5-crons",
+  "requests": [
+    {
+      "name": "login",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-with-password",
+      "body": "{\"identity\": \"admin@example.com\", \"password\": \"pass12345678\"}",
+      "save": {
+        "token": "token"
+      }
+    },
+    {
+      "name": "list",
+      "method": "GET",
+      "path": "/api/crons",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "list-unauth",
+      "method": "GET",
+      "path": "/api/crons"
+    },
+    {
+      "name": "run-logs-cleanup",
+      "method": "POST",
+      "path": "/api/crons/__pbLogsCleanup__",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "run-unknown",
+      "method": "POST",
+      "path": "/api/crons/nope",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "run-unauth",
+      "method": "POST",
+      "path": "/api/crons/__pbLogsCleanup__"
+    }
+  ]
+}

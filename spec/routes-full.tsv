@@ -1,0 +1,55 @@
+method	route	handler	middleware	bind_fn	file
+GET	/api/backups	backupsList	Bind(RequireSuperuserAuth())	bindBackupApi	backup.go
+POST	/api/backups	backupCreate	Bind(RequireSuperuserAuth())	bindBackupApi	backup.go
+POST	/api/backups/upload	backupUpload	Bind(BodyLimit(0), RequireSuperuserAuth())	bindBackupApi	backup.go
+DELETE	/api/backups/{key}	backupDelete	Bind(RequireSuperuserAuth())	bindBackupApi	backup.go
+GET	/api/backups/{key}	backupDownload) // relies on superuser file token		bindBackupApi	backup.go
+POST	/api/backups/{key}/restore	backupRestore	Bind(RequireSuperuserAuth())	bindBackupApi	backup.go
+POST	/api/batch	batchTransaction	Unbind(DefaultBodyLimitMiddlewareId)	bindBatchApi	batch.go
+GET	/api/collections	collectionsList	Bind(RequireSuperuserAuth()	bindCollectionApi	collection.go
+POST	/api/collections	collectionCreate	Bind(RequireSuperuserAuth()	bindCollectionApi	collection.go
+PUT	/api/collections/import	collectionsImport	Bind(RequireSuperuserAuth()	bindCollectionApi	collection.go
+POST	/api/collections/meta/dry-run-view	collectionDryRunView	Bind(RequireSuperuserAuth()	bindCollectionApi	collection.go
+GET	/api/collections/meta/oauth2-providers	collectionListOAuth2Providers	Bind(RequireSuperuserAuth()	bindCollectionApi	collection.go
+GET	/api/collections/meta/scaffolds	collectionScaffolds	Bind(RequireSuperuserAuth()	bindCollectionApi	collection.go
+DELETE	/api/collections/{collection}	collectionDelete	Bind(RequireSuperuserAuth()	bindCollectionApi	collection.go
+GET	/api/collections/{collection}	collectionView	Bind(RequireSuperuserAuth()	bindCollectionApi	collection.go
+PATCH	/api/collections/{collection}	collectionUpdate	Bind(RequireSuperuserAuth()	bindCollectionApi	collection.go
+GET	/api/collections/{collection}/auth-methods	recordAuthMethods		bindRecordAuthApi	record_auth.go
+POST	/api/collections/{collection}/auth-refresh	recordAuthRefresh		bindRecordAuthApi	record_auth.go
+POST	/api/collections/{collection}/auth-with-oauth2	recordAuthWithOAuth2		bindRecordAuthApi	record_auth.go
+POST	/api/collections/{collection}/auth-with-otp	recordAuthWithOTP		bindRecordAuthApi	record_auth.go
+POST	/api/collections/{collection}/auth-with-password	recordAuthWithPassword		bindRecordAuthApi	record_auth.go
+POST	/api/collections/{collection}/confirm-email-change	recordConfirmEmailChange		bindRecordAuthApi	record_auth.go
+POST	/api/collections/{collection}/confirm-password-reset	recordConfirmPasswordReset		bindRecordAuthApi	record_auth.go
+POST	/api/collections/{collection}/confirm-verification	recordConfirmVerification		bindRecordAuthApi	record_auth.go
+POST	/api/collections/{collection}/impersonate/{id}	recordAuthImpersonate	Bind(RequireSuperuserAuth())	bindRecordAuthApi	record_auth.go
+GET	/api/collections/{collection}/records	recordsList	Unbind(DefaultRateLimitMiddlewareId)	bindRecordCrudApi	record_crud.go
+POST	/api/collections/{collection}/records	recordCreate(true, nil	Unbind(DefaultRateLimitMiddlewareId),Bind(dynamicCollectionBodyLimit(""))	bindRecordCrudApi	record_crud.go
+DELETE	/api/collections/{collection}/records/{id}	recordDelete(true, nil	Unbind(DefaultRateLimitMiddlewareId)	bindRecordCrudApi	record_crud.go
+GET	/api/collections/{collection}/records/{id}	recordView	Unbind(DefaultRateLimitMiddlewareId)	bindRecordCrudApi	record_crud.go
+PATCH	/api/collections/{collection}/records/{id}	recordUpdate(true, nil	Unbind(DefaultRateLimitMiddlewareId),Bind(dynamicCollectionBodyLimit(""))	bindRecordCrudApi	record_crud.go
+POST	/api/collections/{collection}/request-email-change	recordRequestEmailChange		bindRecordAuthApi	record_auth.go
+POST	/api/collections/{collection}/request-otp	recordRequestOTP		bindRecordAuthApi	record_auth.go
+POST	/api/collections/{collection}/request-password-reset	recordRequestPasswordReset		bindRecordAuthApi	record_auth.go
+POST	/api/collections/{collection}/request-verification	recordRequestVerification		bindRecordAuthApi	record_auth.go
+DELETE	/api/collections/{collection}/truncate	collectionTruncate	Bind(RequireSuperuserAuth()	bindCollectionApi	collection.go
+GET	/api/crons	cronsList	Bind(RequireSuperuserAuth()	bindCronApi	cron.go
+POST	/api/crons/{id}	cronRun	Bind(RequireSuperuserAuth()	bindCronApi	cron.go
+POST	/api/files/token	api.fileToken	Bind(RequireAuth())	bindFileApi	file.go
+GET	/api/files/{collection}/{recordId}/{filename}	api.download	Bind(collectionPathRateLimit("", "file"))	bindFileApi	file.go
+GET	/api/health	healthCheck		bindHealthApi	health.go
+DELETE	/api/logs	logsTruncate		bindLogsApi	logs.go
+GET	/api/logs	logsList		bindLogsApi	logs.go
+GET	/api/logs/stats	logsStats		bindLogsApi	logs.go
+GET	/api/logs/{id}	logsView		bindLogsApi	logs.go
+GET	/api/oauth2-redirect	oauth2SubscriptionRedirect		bindRecordAuthApi	record_auth.go
+POST	/api/oauth2-redirect	oauth2SubscriptionRedirect		bindRecordAuthApi	record_auth.go
+GET	/api/realtime	realtimeConnect	Bind(SkipSuccessActivityLog())	bindRealtimeApi	realtime.go
+POST	/api/realtime	realtimeSetSubscriptions		bindRealtimeApi	realtime.go
+GET	/api/settings	settingsList	Bind(RequireSuperuserAuth()	bindSettingsApi	settings.go
+PATCH	/api/settings	settingsSet	Bind(RequireSuperuserAuth()	bindSettingsApi	settings.go
+POST	/api/settings/apple/generate-client-secret	settingsGenerateAppleClientSecret	Bind(RequireSuperuserAuth()	bindSettingsApi	settings.go
+POST	/api/settings/test/email	settingsTestEmail	Bind(RequireSuperuserAuth()	bindSettingsApi	settings.go
+POST	/api/settings/test/s3	settingsTestS3	Bind(RequireSuperuserAuth()	bindSettingsApi	settings.go
+POST	/api/sql	runSQL	Bind(RequireSuperuserAuth()	bindSQLApi	sql.go

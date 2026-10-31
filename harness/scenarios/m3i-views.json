@@ -1,0 +1,310 @@
+{
+  "name": "m3i-views",
+  "requests": [
+    {
+      "name": "login",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-with-password",
+      "body": "{\"identity\": \"admin@example.com\", \"password\": \"pass12345678\"}",
+      "save": { "token": "token" }
+    },
+    {
+      "name": "create-vsrc",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"type\": \"base\", \"name\": \"vsrc\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}, {\"name\": \"num\", \"type\": \"number\"}, {\"name\": \"flag\", \"type\": \"bool\"}, {\"name\": \"blob\", \"type\": \"json\"}, {\"name\": \"dt\", \"type\": \"date\"}, {\"name\": \"pick\", \"type\": \"select\", \"values\": [\"a\", \"b\"], \"maxSelect\": 1}, {\"name\": \"secret\", \"type\": \"text\", \"hidden\": true}]}"
+    },
+    {
+      "name": "rec1",
+      "method": "POST",
+      "path": "/api/collections/vsrc/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"id\": \"vsrc00000000001\", \"title\": \"t1\", \"num\": 1, \"flag\": true, \"blob\": {\"i\": 1}, \"dt\": \"2024-01-02 03:04:05.000Z\", \"pick\": \"a\", \"secret\": \"s1\"}"
+    },
+    {
+      "name": "rec2",
+      "method": "POST",
+      "path": "/api/collections/vsrc/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"id\": \"vsrc00000000002\", \"title\": \"t2\", \"num\": 2, \"flag\": false, \"blob\": {\"i\": 2}, \"dt\": \"2024-01-03 03:04:05.000Z\", \"pick\": \"b\", \"secret\": \"s2\"}"
+    },
+    {
+      "name": "rec3",
+      "method": "POST",
+      "path": "/api/collections/vsrc/records",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"id\": \"vsrc00000000003\", \"title\": \"t3\", \"num\": 3, \"flag\": true, \"blob\": {\"i\": 3}, \"dt\": \"2024-01-04 03:04:05.000Z\", \"pick\": \"a\", \"secret\": \"s3\"}"
+    },
+    {
+      "name": "dry-simple",
+      "method": "POST",
+      "path": "/api/collections/meta/dry-run-view",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"query\": \"SELECT id, title, num, flag, blob FROM vsrc\"}"
+    },
+    {
+      "name": "dry-hidden",
+      "method": "POST",
+      "path": "/api/collections/meta/dry-run-view",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"query\": \"SELECT id, title, secret FROM vsrc\"}"
+    },
+    {
+      "name": "dry-aggr",
+      "method": "POST",
+      "path": "/api/collections/meta/dry-run-view",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"query\": \"SELECT id, count(*) as cnt, total(num) as tot, CAST(num AS text) as ntext, CAST(flag AS int) as nint, CAST(title AS bool) as b FROM vsrc GROUP BY id ORDER BY id\"}"
+    },
+    {
+      "name": "dry-cast-real",
+      "method": "POST",
+      "path": "/api/collections/meta/dry-run-view",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"query\": \"SELECT id, CAST(num AS real) as r FROM vsrc ORDER BY id\"}"
+    },
+    {
+      "name": "dry-alias",
+      "method": "POST",
+      "path": "/api/collections/meta/dry-run-view",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"query\": \"SELECT id, title AS t, vsrc.num AS n FROM vsrc ORDER BY id\"}"
+    },
+    {
+      "name": "dry-int-id",
+      "method": "POST",
+      "path": "/api/collections/meta/dry-run-view",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"query\": \"SELECT (ROW_NUMBER() OVER()) as id, title FROM vsrc ORDER BY title\"}"
+    },
+    {
+      "name": "dry-quote",
+      "method": "POST",
+      "path": "/api/collections/meta/dry-run-view",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"query\": \"SELECT id, title FROM vsrc WHERE title != 'a;b' ORDER BY id\"}"
+    },
+    {
+      "name": "dry-wild",
+      "method": "POST",
+      "path": "/api/collections/meta/dry-run-view",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"query\": \"SELECT * FROM vsrc\"}"
+    },
+    {
+      "name": "dry-noid",
+      "method": "POST",
+      "path": "/api/collections/meta/dry-run-view",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"query\": \"SELECT title FROM vsrc\"}"
+    },
+    {
+      "name": "dry-badcol",
+      "method": "POST",
+      "path": "/api/collections/meta/dry-run-view",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"query\": \"SELECT id, nope FROM vsrc\"}"
+    },
+    {
+      "name": "dry-badtable",
+      "method": "POST",
+      "path": "/api/collections/meta/dry-run-view",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"query\": \"SELECT id FROM nosuch\"}"
+    },
+    {
+      "name": "dry-dup",
+      "method": "POST",
+      "path": "/api/collections/meta/dry-run-view",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"query\": \"SELECT id, id FROM vsrc\"}"
+    },
+    {
+      "name": "dry-multi",
+      "method": "POST",
+      "path": "/api/collections/meta/dry-run-view",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"query\": \"SELECT 1; SELECT 2\"}"
+    },
+    {
+      "name": "dry-empty",
+      "method": "POST",
+      "path": "/api/collections/meta/dry-run-view",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"query\": \"\"}"
+    },
+    {
+      "name": "dry-missing",
+      "method": "POST",
+      "path": "/api/collections/meta/dry-run-view",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{}"
+    },
+    {
+      "name": "dry-noauth",
+      "method": "POST",
+      "path": "/api/collections/meta/dry-run-view",
+      "body": "{\"query\": \"SELECT id FROM vsrc\"}"
+    },
+    {
+      "name": "create-view-empty",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"type\": \"view\", \"name\": \"vtest\", \"viewQuery\": \"\"}"
+    },
+    {
+      "name": "create-view",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"type\": \"view\", \"name\": \"vtest\", \"viewQuery\": \"SELECT id, title, num, flag, blob, dt, pick, secret FROM vsrc\"}",
+      "save": { "vtestId": "id" }
+    },
+    {
+      "name": "view-fields",
+      "method": "GET",
+      "path": "/api/collections/vtest",
+      "headers": { "authorization": "{{token}}" }
+    },
+    {
+      "name": "view-list",
+      "method": "GET",
+      "path": "/api/collections/vtest/records",
+      "headers": { "authorization": "{{token}}" },
+      "query": { "sort": "num" }
+    },
+    {
+      "name": "view-rule-empty-create",
+      "method": "PATCH",
+      "path": "/api/collections/vtest",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"createRule\": \"\"}"
+    },
+    {
+      "name": "view-rule-set-update",
+      "method": "PATCH",
+      "path": "/api/collections/vtest",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"updateRule\": \"id != ''\"}"
+    },
+    {
+      "name": "view-query-update",
+      "method": "PATCH",
+      "path": "/api/collections/vtest",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"viewQuery\": \"SELECT id, title, num FROM vsrc\"}"
+    },
+    {
+      "name": "view-list2",
+      "method": "GET",
+      "path": "/api/collections/vtest/records",
+      "headers": { "authorization": "{{token}}" },
+      "query": { "sort": "num" }
+    },
+    {
+      "name": "view-bad-update",
+      "method": "PATCH",
+      "path": "/api/collections/vtest",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"viewQuery\": \"SELECT nope FROM vsrc\"}"
+    },
+    {
+      "name": "view-rename",
+      "method": "PATCH",
+      "path": "/api/collections/vtest",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"name\": \"vtest2\"}"
+    },
+    {
+      "name": "view-list3",
+      "method": "GET",
+      "path": "/api/collections/vtest2/records",
+      "headers": { "authorization": "{{token}}" },
+      "query": { "sort": "num" }
+    },
+    {
+      "name": "patch-src-num-text",
+      "method": "PATCH",
+      "path": "/api/collections/vsrc",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"fields\": [{\"name\": \"title\", \"type\": \"text\"}, {\"name\": \"num\", \"type\": \"text\"}, {\"name\": \"flag\", \"type\": \"bool\"}, {\"name\": \"blob\", \"type\": \"json\"}, {\"name\": \"dt\", \"type\": \"date\"}, {\"name\": \"pick\", \"type\": \"select\", \"values\": [\"a\", \"b\"], \"maxSelect\": 1}, {\"name\": \"secret\", \"type\": \"text\", \"hidden\": true}]}"
+    },
+    {
+      "name": "view-after-resave",
+      "method": "GET",
+      "path": "/api/collections/vtest2",
+      "headers": { "authorization": "{{token}}" }
+    },
+    {
+      "name": "view-records-after-resave",
+      "method": "GET",
+      "path": "/api/collections/vtest2/records",
+      "headers": { "authorization": "{{token}}" },
+      "query": { "sort": "num" }
+    },
+    {
+      "name": "delete-src-blocked",
+      "method": "DELETE",
+      "path": "/api/collections/vsrc",
+      "headers": { "authorization": "{{token}}" }
+    },
+    {
+      "name": "src-still-there",
+      "method": "GET",
+      "path": "/api/collections/vsrc",
+      "headers": { "authorization": "{{token}}" }
+    },
+    {
+      "name": "patch-src-rename-title",
+      "method": "PATCH",
+      "path": "/api/collections/vsrc",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"fields\": [{\"name\": \"title2\", \"type\": \"text\"}, {\"name\": \"num\", \"type\": \"text\"}, {\"name\": \"flag\", \"type\": \"bool\"}, {\"name\": \"blob\", \"type\": \"json\"}, {\"name\": \"dt\", \"type\": \"date\"}, {\"name\": \"pick\", \"type\": \"select\", \"values\": [\"a\", \"b\"], \"maxSelect\": 1}, {\"name\": \"secret\", \"type\": \"text\", \"hidden\": true}]}"
+    },
+    {
+      "name": "view-broken",
+      "method": "GET",
+      "path": "/api/collections/vtest2",
+      "headers": { "authorization": "{{token}}" }
+    },
+    {
+      "name": "view-records-broken",
+      "method": "GET",
+      "path": "/api/collections/vtest2/records",
+      "headers": { "authorization": "{{token}}" }
+    },
+    {
+      "name": "patch-src-back",
+      "method": "PATCH",
+      "path": "/api/collections/vsrc",
+      "headers": { "authorization": "{{token}}" },
+      "body": "{\"fields\": [{\"name\": \"title\", \"type\": \"text\"}, {\"name\": \"num\", \"type\": \"text\"}, {\"name\": \"flag\", \"type\": \"bool\"}, {\"name\": \"blob\", \"type\": \"json\"}, {\"name\": \"dt\", \"type\": \"date\"}, {\"name\": \"pick\", \"type\": \"select\", \"values\": [\"a\", \"b\"], \"maxSelect\": 1}, {\"name\": \"secret\", \"type\": \"text\", \"hidden\": true}]}"
+    },
+    {
+      "name": "view-restored",
+      "method": "GET",
+      "path": "/api/collections/vtest2",
+      "headers": { "authorization": "{{token}}" }
+    },
+    {
+      "name": "delete-vtest2",
+      "method": "DELETE",
+      "path": "/api/collections/vtest2",
+      "headers": { "authorization": "{{token}}" }
+    },
+    {
+      "name": "view-gone",
+      "method": "GET",
+      "path": "/api/collections/vtest2",
+      "headers": { "authorization": "{{token}}" }
+    },
+    {
+      "name": "delete-vsrc",
+      "method": "DELETE",
+      "path": "/api/collections/vsrc",
+      "headers": { "authorization": "{{token}}" }
+    }
+  ]
+}

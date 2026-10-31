@@ -1,0 +1,55 @@
+method	route	probe_path	status	exists	handler
+GET	/api/backups	/api/backups	401	yes	backupsList
+POST	/api/backups	/api/backups	401	yes	backupCreate
+POST	/api/backups/upload	/api/backups/upload	401	yes	backupUpload
+DELETE	/api/backups/{key}	/api/backups/x.zip	401	yes	backupDelete
+GET	/api/backups/{key}	/api/backups/x.zip	403	yes	backupDownload) // relies on superuser file token
+POST	/api/backups/{key}/restore	/api/backups/x.zip/restore	401	yes	backupRestore
+POST	/api/batch	/api/batch	403	yes	batchTransaction
+GET	/api/collections	/api/collections	401	yes	collectionsList
+POST	/api/collections	/api/collections	401	yes	collectionCreate
+PUT	/api/collections/import	/api/collections/import	401	yes	collectionsImport
+POST	/api/collections/meta/dry-run-view	/api/collections/meta/dry-run-view	401	yes	collectionDryRunView
+GET	/api/collections/meta/oauth2-providers	/api/collections/meta/oauth2-providers	401	yes	collectionListOAuth2Providers
+GET	/api/collections/meta/scaffolds	/api/collections/meta/scaffolds	401	yes	collectionScaffolds
+DELETE	/api/collections/{collection}	/api/collections/users	401	yes	collectionDelete
+GET	/api/collections/{collection}	/api/collections/users	401	yes	collectionView
+PATCH	/api/collections/{collection}	/api/collections/users	401	yes	collectionUpdate
+GET	/api/collections/{collection}/auth-methods	/api/collections/users/auth-methods	200	yes	recordAuthMethods
+POST	/api/collections/{collection}/auth-refresh	/api/collections/users/auth-refresh	401	yes	recordAuthRefresh
+POST	/api/collections/{collection}/auth-with-oauth2	/api/collections/users/auth-with-oauth2	403	yes	recordAuthWithOAuth2
+POST	/api/collections/{collection}/auth-with-otp	/api/collections/users/auth-with-otp	403	yes	recordAuthWithOTP
+POST	/api/collections/{collection}/auth-with-password	/api/collections/users/auth-with-password	400	yes	recordAuthWithPassword
+POST	/api/collections/{collection}/confirm-email-change	/api/collections/users/confirm-email-change	400	yes	recordConfirmEmailChange
+POST	/api/collections/{collection}/confirm-password-reset	/api/collections/users/confirm-password-reset	400	yes	recordConfirmPasswordReset
+POST	/api/collections/{collection}/confirm-verification	/api/collections/users/confirm-verification	400	yes	recordConfirmVerification
+POST	/api/collections/{collection}/impersonate/{id}	/api/collections/users/impersonate/nonexistentid123	401	yes	recordAuthImpersonate
+GET	/api/collections/{collection}/records	/api/collections/users/records	200	yes	recordsList
+POST	/api/collections/{collection}/records	/api/collections/users/records	400	yes	recordCreate(true, nil
+DELETE	/api/collections/{collection}/records/{id}	/api/collections/users/records/nonexistentid123	404	NO	recordDelete(true, nil
+GET	/api/collections/{collection}/records/{id}	/api/collections/users/records/nonexistentid123	404	NO	recordView
+PATCH	/api/collections/{collection}/records/{id}	/api/collections/users/records/nonexistentid123	404	NO	recordUpdate(true, nil
+POST	/api/collections/{collection}/request-email-change	/api/collections/users/request-email-change	401	yes	recordRequestEmailChange
+POST	/api/collections/{collection}/request-otp	/api/collections/users/request-otp	403	yes	recordRequestOTP
+POST	/api/collections/{collection}/request-password-reset	/api/collections/users/request-password-reset	400	yes	recordRequestPasswordReset
+POST	/api/collections/{collection}/request-verification	/api/collections/users/request-verification	400	yes	recordRequestVerification
+DELETE	/api/collections/{collection}/truncate	/api/collections/users/truncate	401	yes	collectionTruncate
+GET	/api/crons	/api/crons	401	yes	cronsList
+POST	/api/crons/{id}	/api/crons/nonexistentid123	401	yes	cronRun
+POST	/api/files/token	/api/files/token	401	yes	api.fileToken
+GET	/api/files/{collection}/{recordId}/{filename}	/api/files/users/nonexistentid123/x.txt	404	NO	api.download
+GET	/api/health	/api/health	200	yes	healthCheck
+DELETE	/api/logs	/api/logs	401	yes	logsTruncate
+GET	/api/logs	/api/logs	401	yes	logsList
+GET	/api/logs/stats	/api/logs/stats	401	yes	logsStats
+GET	/api/logs/{id}	/api/logs/nonexistentid123	401	yes	logsView
+GET	/api/oauth2-redirect	/api/oauth2-redirect	200	yes	oauth2SubscriptionRedirect
+POST	/api/oauth2-redirect	/api/oauth2-redirect	200	yes	oauth2SubscriptionRedirect
+GET	/api/realtime	/api/realtime	200	yes	realtimeConnect
+POST	/api/realtime	/api/realtime	400	yes	realtimeSetSubscriptions
+GET	/api/settings	/api/settings	401	yes	settingsList
+PATCH	/api/settings	/api/settings	401	yes	settingsSet
+POST	/api/settings/apple/generate-client-secret	/api/settings/apple/generate-client-secret	401	yes	settingsGenerateAppleClientSecret
+POST	/api/settings/test/email	/api/settings/test/email	401	yes	settingsTestEmail
+POST	/api/settings/test/s3	/api/settings/test/s3	401	yes	settingsTestS3
+POST	/api/sql	/api/sql	401	yes	runSQL

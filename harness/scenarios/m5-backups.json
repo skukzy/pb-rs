@@ -1,0 +1,188 @@
+{
+  "name": "m5-backups",
+  "requests": [
+    {
+      "name": "login",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-with-password",
+      "body": "{\"identity\": \"admin@example.com\", \"password\": \"pass12345678\"}",
+      "save": {
+        "token": "token"
+      }
+    },
+    {
+      "name": "list-empty",
+      "method": "GET",
+      "path": "/api/backups",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "list-unauth",
+      "method": "GET",
+      "path": "/api/backups"
+    },
+    {
+      "name": "create",
+      "method": "POST",
+      "path": "/api/backups",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"name\": \"probe-backup.zip\"}"
+    },
+    {
+      "name": "create-duplicate",
+      "method": "POST",
+      "path": "/api/backups",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"name\": \"probe-backup.zip\"}"
+    },
+    {
+      "name": "create-bad-name",
+      "method": "POST",
+      "path": "/api/backups",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"name\": \"Bad Name.zip\"}"
+    },
+    {
+      "name": "create-long-name",
+      "method": "POST",
+      "path": "/api/backups",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"name\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.zip\"}"
+    },
+    {
+      "name": "list-one",
+      "method": "GET",
+      "path": "/api/backups",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "file-token",
+      "method": "POST",
+      "path": "/api/files/token",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "save": {
+        "fileToken": "token"
+      }
+    },
+    {
+      "name": "download",
+      "method": "GET",
+      "path": "/api/backups/probe-backup.zip",
+      "query": {
+        "token": "{{fileToken}}"
+      }
+    },
+    {
+      "name": "download-bad-token",
+      "method": "GET",
+      "path": "/api/backups/probe-backup.zip",
+      "query": {
+        "token": "nope"
+      }
+    },
+    {
+      "name": "upload",
+      "method": "POST",
+      "path": "/api/backups/upload",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "multipart": {
+        "field": "file",
+        "filename": "real.zip",
+        "content_type": "application/zip",
+        "content_base64": "UEsDBBQAAAAAAAAAIVCIYbY+JAAAACQAAAAJAAAAaGVsbG8udHh0aGVsbG8gZnJvbSB0aGUgZGlmZmVyZW50aWFsIGhhcm5lc3MKUEsBAhQDFAAAAAAAAAAhUIhhtj4kAAAAJAAAAAkAAAAAAAAAAAAAAIABAAAAAGhlbGxvLnR4dFBLBQYAAAAAAQABADcAAABLAAAAAAA="
+      }
+    },
+    {
+      "name": "list-two",
+      "method": "GET",
+      "path": "/api/backups",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "upload-duplicate",
+      "method": "POST",
+      "path": "/api/backups/upload",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "multipart": {
+        "field": "file",
+        "filename": "real.zip",
+        "content_type": "application/zip",
+        "content_base64": "UEsDBBQAAAAAAAAAIVCIYbY+JAAAACQAAAAJAAAAaGVsbG8udHh0aGVsbG8gZnJvbSB0aGUgZGlmZmVyZW50aWFsIGhhcm5lc3MKUEsBAhQDFAAAAAAAAAAhUIhhtj4kAAAAJAAAAAkAAAAAAAAAAAAAAIABAAAAAGhlbGxvLnR4dFBLBQYAAAAAAQABADcAAABLAAAAAAA="
+      }
+    },
+    {
+      "name": "upload-fake",
+      "method": "POST",
+      "path": "/api/backups/upload",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "multipart": {
+        "field": "file",
+        "filename": "fake.zip",
+        "content_type": "application/zip",
+        "content_base64": "UEsDBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      }
+    },
+    {
+      "name": "delete",
+      "method": "DELETE",
+      "path": "/api/backups/probe-backup.zip",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "delete-again",
+      "method": "DELETE",
+      "path": "/api/backups/probe-backup.zip",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "list-after-delete",
+      "method": "GET",
+      "path": "/api/backups",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "delete-uploaded",
+      "method": "DELETE",
+      "path": "/api/backups/real.zip",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "list-final",
+      "method": "GET",
+      "path": "/api/backups",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    }
+  ]
+}

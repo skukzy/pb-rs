@@ -1,0 +1,14 @@
+{
+  "name": "basic",
+  "requests": [
+    { "name": "health", "method": "GET", "path": "/api/health" },
+    { "name": "settings-anon", "method": "GET", "path": "/api/settings" },
+    { "name": "collections-anon", "method": "GET", "path": "/api/collections" },
+    { "name": "records-list-users", "method": "GET", "path": "/api/collections/users/records" },
+    { "name": "records-list-missing-collection", "method": "GET", "path": "/api/collections/nope/records" },
+    { "name": "record-view-missing", "method": "GET", "path": "/api/collections/users/records/nonexistentid1" },
+    { "name": "auth-methods-users", "method": "GET", "path": "/api/collections/users/auth-methods" },
+    { "name": "admin-ui-root", "method": "GET", "path": "/_/" },
+    { "name": "not-found", "method": "GET", "path": "/api/does-not-exist" }
+  ]
+}

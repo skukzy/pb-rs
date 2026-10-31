@@ -1,0 +1,133 @@
+{
+  "name": "m4b-impersonate",
+  "requests": [
+    {
+      "name": "login-superuser",
+      "method": "POST",
+      "path": "/api/collections/_superusers/auth-with-password",
+      "body": "{\"identity\": \"admin@example.com\", \"password\": \"pass12345678\"}",
+      "save": {
+        "token": "token"
+      }
+    },
+    {
+      "name": "create-user",
+      "method": "POST",
+      "path": "/api/collections/users/records",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"email\": \"imp@example.com\", \"password\": \"pass12345678\", \"passwordConfirm\": \"pass12345678\"}",
+      "save": {
+        "userId": "id"
+      }
+    },
+    {
+      "name": "create-base-collection",
+      "method": "POST",
+      "path": "/api/collections",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"name\": \"imp_base\", \"type\": \"base\", \"fields\": [{\"name\": \"title\", \"type\": \"text\"}]}"
+    },
+    {
+      "name": "unauth",
+      "method": "POST",
+      "path": "/api/collections/users/impersonate/{{userId}}"
+    },
+    {
+      "name": "unauth-bad-collection",
+      "method": "POST",
+      "path": "/api/collections/nope/impersonate/{{userId}}"
+    },
+    {
+      "name": "bad-collection",
+      "method": "POST",
+      "path": "/api/collections/nope/impersonate/{{userId}}",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "base-collection",
+      "method": "POST",
+      "path": "/api/collections/imp_base/impersonate/{{userId}}",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "bad-record",
+      "method": "POST",
+      "path": "/api/collections/users/impersonate/nonexistentid123",
+      "headers": {
+        "authorization": "{{token}}"
+      }
+    },
+    {
+      "name": "negative-duration",
+      "method": "POST",
+      "path": "/api/collections/users/impersonate/{{userId}}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"duration\": -1}"
+    },
+    {
+      "name": "string-duration",
+      "method": "POST",
+      "path": "/api/collections/users/impersonate/{{userId}}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"duration\": \"100\"}"
+    },
+    {
+      "name": "default-duration",
+      "method": "POST",
+      "path": "/api/collections/users/impersonate/{{userId}}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{}",
+      "save": {
+        "impToken": "token"
+      }
+    },
+    {
+      "name": "custom-duration",
+      "method": "POST",
+      "path": "/api/collections/users/impersonate/{{userId}}",
+      "headers": {
+        "authorization": "{{token}}"
+      },
+      "body": "{\"duration\": 100}"
+    },
+    {
+      "name": "login-user",
+      "method": "POST",
+      "path": "/api/collections/users/auth-with-password",
+      "body": "{\"identity\": \"imp@example.com\", \"password\": \"pass12345678\"}",
+      "save": {
+        "userToken": "token"
+      }
+    },
+    {
+      "name": "as-user",
+      "method": "POST",
+      "path": "/api/collections/users/impersonate/{{userId}}",
+      "headers": {
+        "authorization": "{{userToken}}"
+      }
+    },
+    {
+      "name": "impersonated-refresh",
+      "method": "POST",
+      "path": "/api/collections/users/auth-refresh",
+      "headers": {
+        "authorization": "{{impToken}}"
+      }
+    }
+  ]
+}
